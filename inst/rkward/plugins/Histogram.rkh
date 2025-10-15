@@ -1,0 +1,67 @@
+<!DOCTYPE rkhelp >
+<document>
+	<!--
+		this code was generated using the rkwarddev package.
+	perhaps don't make changes here, but in the rkwarddev script instead!
+	-->
+	<summary>
+	</summary>
+	<usage>
+	</usage>
+	<!--
+		<section id="sct_EDITORDE" title="EDIT OR DELETE ME">
+			EDIT OR DELETE ME
+		</section>
+	-->
+	<settings>
+		<caption id="tab_Data" />
+		<setting id="svy_object">
+		</setting>
+		<setting id="x_var">
+		</setting>
+		<setting id="y_var">
+		</setting>
+		<setting id="z_var">
+		</setting>
+		<caption id="tab_Labels" />
+		<setting id="title_input">
+		</setting>
+		<setting id="subtitle_input">
+		</setting>
+		<setting id="xlab_input">
+		</setting>
+		<setting id="ylab_input">
+		</setting>
+		<setting id="legend_title_input">
+		</setting>
+		<setting id="caption_input">
+		</setting>
+		<caption id="tab_StyleLyt" />
+		<setting id="bins_spin">
+		</setting>
+		<caption id="tab_OutptDvc" />
+		<setting id="device_type">
+		</setting>
+		<setting id="jpg_quality">
+		</setting>
+		<setting id="dev_width">
+		</setting>
+		<setting id="dev_height">
+		</setting>
+		<setting id="dev_res">
+		</setting>
+		<setting id="dev_bg">
+		</setting>
+	</settings>
+	<!--
+		<related>
+			<ul>
+				<li>
+					<link href="rkward://rhelp/..." />
+				</li>
+			</ul>
+		</related>
+	-->
+	<technical>
+	</technical>
+</document>

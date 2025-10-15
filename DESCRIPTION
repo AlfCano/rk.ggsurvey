@@ -1,0 +1,17 @@
+Package: rk.ggsurvey
+Type: Package
+Title: A plugin package analyze complex survey designs with custom
+        plugins and the 'ggsurvey' package.
+Version: 0.1.0
+Date: 2025-10-14
+Author: Alfonso Cano
+Maintainer: Alfonso Cano <alfonso.cano@correo.buap.mx>
+Enhances: rkward
+Description: A plugin package analyze complex survey designs with
+        custom plugins and the 'ggsurvey' package.
+License: GPL (>= 3)
+Encoding: UTF-8
+LazyLoad: yes
+URL: https://github.com/AlfCano/rk.ggsurvey
+Authors@R: person(given="Alfonso", family="Cano",
+        email="alfonso.cano@correo.buap.mx", role=c("aut", "cre"))

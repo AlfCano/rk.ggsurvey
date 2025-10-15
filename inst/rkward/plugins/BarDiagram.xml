@@ -1,0 +1,82 @@
+<!DOCTYPE rkplugin >
+<document>
+	<!--
+		this code was generated using the rkwarddev package.
+	perhaps don't make changes here, but in the rkwarddev script instead!
+	-->
+	<code file="BarDiagram.js" />
+	<help file="BarDiagram.rkh" />
+	<!--
+		<dependencies>
+		</dependencies>
+	-->
+	<logic>
+		<!--
+			<convert id="!edit!" sources="!edit!" mode="equals" standard="!edit!" />
+		-->
+		<!--
+			<connect governor="!edit!.state" client="!edit!.enabled" />
+		-->
+	</logic>
+	<dialog label="Survey Bar Plot">
+		<row id="row_vSDODDSDOX">
+			<varselector id="bar_svy_selector" label="Survey Design Objects" />
+			<column id="clm_tDDSDOXVYV">
+				<tabbook>
+					<tab label="Data" id="tab_Data">
+						<column id="clm_vSDOXVYVFV">
+							<varslot id="svy_object" label="Survey Design Object" source="bar_svy_selector" required="true" />
+							<varslot id="x_var" label="X Variable" source="bar_svy_selector" required="true" />
+							<varslot id="y_var" label="Y Variable (for crosstabs)" source="bar_svy_selector" />
+							<varslot id="z_var" label="Faceting Variable (for 3D)" source="bar_svy_selector" />
+						</column>
+					</tab>
+					<tab label="Labels" id="tab_Labels">
+						<column id="clm_inpPTSXYLC">
+							<input label="Plot Title" id="title_input" />
+							<input label="Subtitle" id="subtitle_input" />
+							<input label="X-axis label" id="xlab_input" />
+							<input label="Y-axis label" id="ylab_input" />
+							<input label="Legend title" id="legend_title_input" />
+							<input label="Caption" id="caption_input" />
+						</column>
+					</tab>
+					<tab label="Style &amp; Layout" id="tab_StyleLyt">
+						<column id="clm_dBPFDF1S1X">
+							<dropdown id="pos_dropdown" label="Bar Position">
+								<option label="Fill (relative)" value="fill" checked="true" />
+								<option label="Dodge (side-by-side)" value="dodge" />
+							</dropdown>
+							<checkbox id="cbox_flip" label="Flip coordinates" value="1" />
+							<checkbox id="cbox_legend" label="Show legend" value="1" checked="true" />
+							<spinbox label="X-axis text angle" id="spin_angle" min="0" max="90" />
+							<dropdown id="palette_input" label="Color Palette">
+								<option label="Default (Set1)" value="Set1" checked="true" />
+								<option label="Paired" value="Paired" />
+								<option label="Dark2" value="Dark2" />
+							</dropdown>
+						</column>
+					</tab>
+					<tab label="Output Device" id="tab_OutptDvc">
+						<column id="clm_dDPNGPNGSV">
+							<dropdown id="device_type" label="Device type">
+								<option label="PNG" value="PNG" checked="true" />
+								<option label="SVG" value="SVG" />
+								<option label="JPG" value="JPG" />
+							</dropdown>
+							<spinbox label="JPG Quality (0-100)" id="jpg_quality" initial="75" min="0" max="100" />
+							<spinbox label="Width (px)" id="dev_width" initial="720" min="100" max="4000" />
+							<spinbox label="Height (px)" id="dev_height" initial="720" min="100" max="4000" />
+							<spinbox label="Resolution (ppi)" id="dev_res" initial="125" min="50" max="600" />
+							<dropdown id="dev_bg" label="Background">
+								<option label="Transparent" value="transparent" checked="true" />
+								<option label="White" value="white" />
+							</dropdown>
+						</column>
+					</tab>
+				</tabbook>
+				<preview label="Preview" id="plot_preview" />
+			</column>
+		</row>
+	</dialog>
+</document>
