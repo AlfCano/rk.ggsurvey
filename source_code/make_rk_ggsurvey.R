@@ -15,7 +15,7 @@ local({
     ),
     about = list(
       desc = "A plugin package analyze complex survey designs with custom plugins and the 'ggsurvey' package.",
-      version = "0.1.2",
+      version = "0.1.3",
       url = "https://github.com/AlfCano/rk.ggsurvey",
       license = "GPL (>= 3)"
     )
@@ -46,6 +46,7 @@ local({
 
   labels_tab <- rk.XML.col(
     rk.XML.input(label="Plot Title", id.name="title_input"),
+    rk.XML.input(label="Variable prefix to remove from legend", id.name="prefix_clean_input"),
     rk.XML.input(label="Subtitle", id.name="subtitle_input"),
     rk.XML.input(label="X-axis label", id.name="xlab_input"),
     rk.XML.input(label="Y-axis label", id.name="ylab_input"),

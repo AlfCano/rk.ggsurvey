@@ -71,12 +71,12 @@ function calculate(is_preview){
     var prefix_clean = getValue("prefix_clean_input");
     var facet_var_full = getValue("facet_var");
     var conf_level = getValue("conf_level") / 100;
-    
+
     echo("ci_multiplier <- qnorm(1 - (1 - " + conf_level + ") / 2)\n");
 
     var estimate_array = estimate_vars_full.split(/\n/).filter(function(n){ return n != "" }).map(function(item) { return "\"" + getColumnName(item) + "\""; });
     var se_array = se_vars_full.split(/\n/).filter(function(n){ return n != "" }).map(function(item) { return "\"" + getColumnName(item) + "\""; });
-    
+
     var by_vars = new Array();
     by_vars.push("\"" + xaxis_clean + "\"");
     by_vars.push("\"respuesta\"");
@@ -91,16 +91,16 @@ function calculate(is_preview){
     echo("piv2 <- tidyr::pivot_longer(est, cols=dplyr::all_of(c(" + se_array.join(",") + ")), names_to = \"variable\", values_to = \"se\")\n");
     echo("piv2 <- dplyr::mutate(piv2, respuesta = stringr::str_remove(variable, \"^se\\\\.\"))\n");
     echo("piv3 <- dplyr::left_join(piv1, piv2, by = c(" + by_vars.join(", ") + "))\n");
-    
+
     if(prefix_clean){
       echo("piv3[[\"respuesta\"]] <- gsub(\"" + prefix_clean + "\", \"\", piv3[[\"respuesta\"]] )\n");
     }
     echo("piv3[[\"respuesta\"]] <- forcats::fct_rev(piv3[[\"respuesta\"]] )\n");
-    
+
     echo("p <- ggplot2::ggplot(piv3, ggplot2::aes(x = " + xaxis_clean + ", y = recuento, color = respuesta, group = respuesta)) +\n  ggplot2::geom_line() +\n");
     echo("  ggplot2::geom_errorbar(ggplot2::aes(ymin = recuento - ci_multiplier*se, ymax = recuento + ci_multiplier*se), width = 0.2) +\n");
     echo("  ggplot2::scale_color_brewer(palette = \"" + getValue("palette_input") + "\", labels = function(x) stringr::str_wrap(x, width = 20)) +\n");
-    
+
     var labs_list = new Array();
     if(getValue("title_input")) { labs_list.push("title = \"" + getValue("title_input") + "\""); }
     if(getValue("subtitle_input")) { labs_list.push("subtitle = \"" + getValue("subtitle_input") + "\""); }
@@ -109,9 +109,9 @@ function calculate(is_preview){
     if(getValue("legend_title_input")) { labs_list.push("color = \"" + getValue("legend_title_input") + "\""); }
     if(getValue("caption_input")) { labs_list.push("caption = \"" + getValue("caption_input") + "\""); }
     if(labs_list.length > 0) { echo("  ggplot2::labs(" + labs_list.join(", ") + ") +\n"); }
-    
+
     echo("  ggplot2::theme_bw()\n");
-    
+
     if(facet_var_full){
       var facet_layout = getValue("facet_layout");
       var facet_opts = "";

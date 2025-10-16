@@ -64,8 +64,8 @@ function calculate(is_preview){
     if(getValue("ylab_input")) { labs_list.push("y = \"" + getValue("ylab_input") + "\""); }
     if(getValue("caption_input")) { labs_list.push("caption = \"" + getValue("caption_input") + "\""); }
     if(labs_list.length > 0) { echo("p <- p + ggplot2::labs(" + labs_list.join(", ") + ")\n"); }
-    if(getValue("spin_angle") && (getValue("spin_angle") != "0" || getValue("spin_vjust") != "0.5")) { 
-        echo("p <- p + ggplot2::theme(axis.text.x = ggplot2::element_text(angle=" + getValue("spin_angle") + ", vjust=" + getValue("spin_vjust") + "))\n"); 
+    if(getValue("spin_angle") && (getValue("spin_angle") != "0" || getValue("spin_vjust") != "0.5")) {
+        echo("p <- p + ggplot2::theme(axis.text.x = ggplot2::element_text(angle=" + getValue("spin_angle") + ", vjust=" + getValue("spin_vjust") + "))\n");
     }
   
 }

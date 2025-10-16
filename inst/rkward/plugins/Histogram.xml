@@ -31,8 +31,9 @@
 						</column>
 					</tab>
 					<tab label="Labels" id="tab_Labels">
-						<column id="clm_inpPTSXYLC">
+						<column id="clm_inPTVSXYLC">
 							<input label="Plot Title" id="title_input" />
+							<input label="Variable prefix to remove from legend" id="prefix_clean_input" />
 							<input label="Subtitle" id="subtitle_input" />
 							<input label="X-axis label" id="xlab_input" />
 							<input label="Y-axis label" id="ylab_input" />
