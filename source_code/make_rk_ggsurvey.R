@@ -15,7 +15,7 @@ local({
     ),
     about = list(
       desc = "A plugin package analyze complex survey designs with custom plugins and the 'ggsurvey' package.",
-      version = "0.1.0",
+      version = "0.1.2",
       url = "https://github.com/AlfCano/rk.ggsurvey",
       license = "GPL (>= 3)"
     )
@@ -82,6 +82,26 @@ local({
     }
   '
 
+  # --- CHANGE: Expanded Color Palette Dropdown ---
+  color_palette_dropdown <- rk.XML.dropdown(label="Color Palette (ColorBrewer)", id.name="palette_input", options=list(
+    "Default (Set1)"=list(val="Set1",chk=TRUE),
+    "Qualitative: Accent"=list(val="Accent"),
+    "Qualitative: Dark2"=list(val="Dark2"),
+    "Qualitative: Paired"=list(val="Paired"),
+    "Qualitative: Pastel1"=list(val="Pastel1"),
+    "Qualitative: Pastel2"=list(val="Pastel2"),
+    "Qualitative: Set2"=list(val="Set2"),
+    "Qualitative: Set3"=list(val="Set3"),
+    "Sequential: Blues"=list(val="Blues"),
+    "Sequential: Greens"=list(val="Greens"),
+    "Sequential: Oranges"=list(val="Oranges"),
+    "Sequential: Purples"=list(val="Purples"),
+    "Sequential: Reds"=list(val="Reds"),
+    "Diverging: RdYlBu"=list(val="RdYlBu"),
+    "Diverging: Spectral"=list(val="Spectral"),
+    "Diverging: BrBG"=list(val="BrBG")
+  ))
+
   # =========================================================================================
   # Main Plugin: Line Graph for svyby
   # =========================================================================================
@@ -99,20 +119,10 @@ local({
       rk.XML.col(
         rk.XML.tabbook(tabs=list(
           "Data" = rk.XML.col(svyby_object_slot, xaxis_var_slot, facet_var_slot, estimate_vars_slot, se_vars_slot),
-          "Labels" = rk.XML.col(
-            rk.XML.input(label="Plot Title", id.name="title_input"),
-            rk.XML.input(label="Subtitle", id.name="subtitle_input"),
-            rk.XML.input(label="Variable prefix to remove from legend", id.name="prefix_clean_input"),
-            rk.XML.input(label="X-axis label", id.name="xlab_input", initial="Year"),
-            rk.XML.input(label="Y-axis label", id.name="ylab_input", initial="Weighted Total"),
-            rk.XML.input(label="Color legend title", id.name="legend_title_input", initial="Category"),
-            rk.XML.input(label="Caption", id.name="caption_input")
-          ),
+          "Labels" = labels_tab,
           "Style & Layout" = rk.XML.col(
             rk.XML.spinbox(label="Confidence level for error bars (%)", id.name="conf_level", min=1, max=99, initial=95),
-            rk.XML.dropdown(label="Color Palette (ColorBrewer)", id.name="palette_input", options=list(
-              "Default (Set1)"=list(val="Set1",chk=TRUE), "Qualitative: Paired"=list(val="Paired"), "Qualitative: Dark2"=list(val="Dark2")
-            )),
+            color_palette_dropdown, # Using the new expanded dropdown
             rk.XML.dropdown(label="Facet Layout", id.name="facet_layout", options=list(
               "Wrap (default)"=list(val="wrap",chk=TRUE), "Force to one row"=list(val="row"), "Force to one column"=list(val="col")
             ))
@@ -197,11 +207,12 @@ local({
       "Data" = rk.XML.col(bar_svy_slot, bar_x_slot, bar_y_slot, bar_z_slot),
       "Labels" = labels_tab,
       "Style & Layout" = rk.XML.col(
-        rk.XML.dropdown(label="Bar Position", id.name="pos_dropdown", options=list("Fill (relative)"=list(val="fill", chk=TRUE), "Dodge (side-by-side)"=list(val="dodge"))),
+        rk.XML.cbox(label="Fill bars with relative frequency (fill=TRUE)", id.name="cbox_fill", value="1", chk=TRUE),
         rk.XML.cbox(label="Flip coordinates", value="1", id.name="cbox_flip"),
         rk.XML.cbox(label="Show legend", value="1", id.name="cbox_legend", chk=TRUE),
         rk.XML.spinbox(label="X-axis text angle", id.name="spin_angle", min=0, max=90, initial=0),
-        rk.XML.dropdown(label="Color Palette", id.name="palette_input", options=list("Default (Set1)"=list(val="Set1",chk=TRUE), "Paired"=list(val="Paired"), "Dark2"=list(val="Dark2")))
+        rk.XML.spinbox(label="X-axis text vjust", id.name="spin_vjust", min=0, max=1, initial=0.5, real=TRUE),
+        color_palette_dropdown # Using the new expanded dropdown
       ),
       "Output Device" = device_tab
     )),
@@ -219,7 +230,7 @@ local({
     var plot_call = "ggsurvey::" + func_name + "(" + svy_obj + ", " + x_var;
     if(y_var) { plot_call += ", " + y_var; }
     if(z_var) { plot_call += ", " + z_var; }
-    if(getValue("pos_dropdown")) { plot_call += ", position=\\"" + getValue("pos_dropdown") + "\\""; }
+    if(getValue("cbox_fill") == "1") { plot_call += ", fill=TRUE"; }
     plot_call += ")";
     echo("p <- " + plot_call + "\\n");
 
@@ -233,7 +244,9 @@ local({
     if(getValue("caption_input")) { labs_list.push("caption = \\"" + getValue("caption_input") + "\\""); }
     if(labs_list.length > 0) { echo("p <- p + ggplot2::labs(" + labs_list.join(", ") + ")\\n"); }
     if(getValue("cbox_legend") && getValue("cbox_legend") != "1") { echo("p <- p + ggplot2::theme(legend.position=\\"none\\")\\n"); }
-    if(getValue("spin_angle") && getValue("spin_angle") != "0") { echo("p <- p + ggplot2::theme(axis.text.x = ggplot2::element_text(angle=" + getValue("spin_angle") + ", hjust=1))\\n"); }
+    if(getValue("spin_angle") && (getValue("spin_angle") != "0" || getValue("spin_vjust") != "0.5")) {
+        echo("p <- p + ggplot2::theme(axis.text.x = ggplot2::element_text(angle=" + getValue("spin_angle") + ", vjust=" + getValue("spin_vjust") + "))\\n");
+    }
     if(getValue("palette_input")) { echo("p <- p + ggplot2::scale_fill_brewer(palette = \\"" + getValue("palette_input") + "\\")\\n"); }
   ')
   bar_component <- rk.plugin.component("Bar Diagram", xml=list(dialog=bar_dialog), js=list(require=c("ggsurvey","ggplot2"), calculate=js_calc_bar, printout=js_print_graph), hierarchy = list("Survey","Graphs","ggGraphs"))
@@ -251,7 +264,11 @@ local({
     rk.XML.tabbook(tabs=list(
       "Data" = rk.XML.col(box_svy_slot, box_x_slot, box_y_slot, box_z_slot),
       "Labels" = labels_tab,
-      "Style & Layout" = rk.XML.col(rk.XML.cbox(label="Flip coordinates", value="1", id.name="cbox_flip")),
+      "Style & Layout" = rk.XML.col(
+        rk.XML.cbox(label="Flip coordinates", value="1", id.name="cbox_flip"),
+        rk.XML.spinbox(label="X-axis text angle", id.name="spin_angle", min=0, max=90, initial=0),
+        rk.XML.spinbox(label="X-axis text vjust", id.name="spin_vjust", min=0, max=1, initial=0.5, real=TRUE)
+      ),
       "Output Device" = device_tab
     )),
     rk.XML.preview(id.name="plot_preview")
@@ -279,6 +296,9 @@ local({
     if(getValue("ylab_input")) { labs_list.push("y = \\"" + getValue("ylab_input") + "\\""); }
     if(getValue("caption_input")) { labs_list.push("caption = \\"" + getValue("caption_input") + "\\""); }
     if(labs_list.length > 0) { echo("p <- p + ggplot2::labs(" + labs_list.join(", ") + ")\\n"); }
+    if(getValue("spin_angle") && (getValue("spin_angle") != "0" || getValue("spin_vjust") != "0.5")) {
+        echo("p <- p + ggplot2::theme(axis.text.x = ggplot2::element_text(angle=" + getValue("spin_angle") + ", vjust=" + getValue("spin_vjust") + "))\\n");
+    }
   ')
   box_component <- rk.plugin.component("Box Plot", xml=list(dialog=box_dialog), js=list(require=c("ggsurvey","ggplot2"), calculate=js_calc_box, printout=js_print_graph), hierarchy = list("Survey","Graphs","ggGraphs"))
 
@@ -288,37 +308,42 @@ local({
   hex_svy_selector <- rk.XML.varselector(id.name="hex_svy_selector", label="Survey Design Objects"); attr(hex_svy_selector, "classes") <- "svydesign"
   hex_svy_slot <- rk.XML.varslot(label="Survey Design Object", source="hex_svy_selector", required=TRUE, id.name="svy_object")
   hex_x_slot <- rk.XML.varslot(label="X Variable", source="hex_svy_selector", required=TRUE, id.name="x_var"); attr(hex_x_slot, "source_property") <- "variables"
-  hex_y_slot <- rk.XML.varslot(label="Y Variable (for 2D)", source="hex_svy_selector", id.name="y_var"); attr(hex_y_slot, "source_property") <- "variables"
-  hex_z_slot <- rk.XML.varslot(label="Faceting Variable (for 3D)", source="hex_svy_selector", id.name="z_var"); attr(hex_z_slot, "source_property") <- "variables"
+  hex_y_slot <- rk.XML.varslot(label="Y Variable", source="hex_svy_selector", required=TRUE, id.name="y_var"); attr(hex_y_slot, "source_property") <- "variables"
+  hex_a_slot <- rk.XML.varslot(label="Horizontal Facet (a)", source="hex_svy_selector", id.name="a_var"); attr(hex_a_slot, "source_property") <- "variables"
+  hex_b_slot <- rk.XML.varslot(label="Vertical Facet (b)", source="hex_svy_selector", id.name="b_var"); attr(hex_b_slot, "source_property") <- "variables"
 
   hex_dialog <- rk.XML.dialog(label = "Survey Hexbin Plot", child = rk.XML.row(hex_svy_selector, rk.XML.col(
     rk.XML.tabbook(tabs=list(
-      "Data" = rk.XML.col(hex_svy_slot, hex_x_slot, hex_y_slot, hex_z_slot),
+      "Data" = rk.XML.col(hex_svy_slot, hex_x_slot, hex_y_slot, hex_a_slot, hex_b_slot),
       "Labels" = labels_tab,
       "Style & Layout" = rk.XML.col(
-        rk.XML.spinbox(label="Number of bins", id.name="bins_spin", min=10, max=200, initial=30),
         rk.XML.dropdown(label="Color Palette (Viridis)", id.name="palette_input", options=list(
           "Default (viridis)"=list(val="viridis",chk=TRUE), "Magma"=list(val="magma"), "Inferno"=list(val="inferno"), "Plasma"=list(val="plasma")
-        ))
+        )),
+        rk.XML.spinbox(label="X-axis text angle", id.name="spin_angle", min=0, max=90, initial=0),
+        rk.XML.spinbox(label="X-axis text vjust", id.name="spin_vjust", min=0, max=1, initial=0.5, real=TRUE)
       ),
       "Output Device" = device_tab
     )),
     rk.XML.preview(id.name="plot_preview")
   )))
 
-js_calc_hex <- paste(js_helpers, '
+  js_calc_hex <- paste(js_helpers, '
     var svy_obj = getValue("svy_object");
     if(!svy_obj) return;
     var x_var = getColumnName(getValue("x_var"));
     var y_var = getColumnName(getValue("y_var"));
-    var z_var = getColumnName(getValue("z_var"));
-    var plot_opts = ", bins=" + getValue("bins_spin");
+    var a_var = getColumnName(getValue("a_var"));
+    var b_var = getColumnName(getValue("b_var"));
 
-    var func_name = y_var ? (z_var ? "gghexweight3d_svy" : "gghexweight2d_svy") : "gghexweight_svy";
-    var plot_call = "ggsurvey::" + func_name + "(" + svy_obj + ", " + x_var;
-    if(y_var) { plot_call += ", " + y_var; }
-    if(z_var) { plot_call += ", " + z_var; }
-    plot_call += plot_opts + ")";
+    var plot_call = "";
+    if(b_var){
+      plot_call = "ggsurvey::gghexweight3d_svy(" + svy_obj + ", " + x_var + ", " + y_var + ", " + a_var + ", " + b_var + ")";
+    } else if (a_var) {
+      plot_call = "ggsurvey::gghexweight2d_svy(" + svy_obj + ", " + x_var + ", " + y_var + ", " + a_var + ")";
+    } else {
+      plot_call = "ggsurvey::gghexweight_svy(" + svy_obj + ", " + x_var + ", " + y_var + ")";
+    }
     echo("p <- " + plot_call + "\\n");
 
     var labs_list = new Array();
@@ -331,11 +356,12 @@ js_calc_hex <- paste(js_helpers, '
     if(labs_list.length > 0) { echo("p <- p + ggplot2::labs(" + labs_list.join(", ") + ")\\n"); }
 
     if(getValue("palette_input")) {
-       // --- CHANGE: Added the missing closing parenthesis for the R function here ---
        echo("p <- p + ggplot2::scale_fill_viridis_c(option=\\"" + getValue("palette_input") + "\\")\\n");
     }
+    if(getValue("spin_angle") && (getValue("spin_angle") != "0" || getValue("spin_vjust") != "0.5")) {
+        echo("p <- p + ggplot2::theme(axis.text.x = ggplot2::element_text(angle=" + getValue("spin_angle") + ", vjust=" + getValue("spin_vjust") + "))\\n");
+    }
   ')
-
   hex_component <- rk.plugin.component("Hexbin Plot", xml=list(dialog=hex_dialog), js=list(require=c("ggsurvey","ggplot2"), calculate=js_calc_hex, printout=js_print_graph), hierarchy = list("Survey","Graphs","ggGraphs"))
 
   # =========================================================================================
@@ -344,15 +370,15 @@ js_calc_hex <- paste(js_helpers, '
   hist_svy_selector <- rk.XML.varselector(id.name="hist_svy_selector", label="Survey Design Objects"); attr(hist_svy_selector, "classes") <- "svydesign"
   hist_svy_slot <- rk.XML.varslot(label="Survey Design Object", source="hist_svy_selector", required=TRUE, id.name="svy_object")
   hist_x_slot <- rk.XML.varslot(label="X Variable", source="hist_svy_selector", required=TRUE, id.name="x_var"); attr(hist_x_slot, "source_property") <- "variables"
-  hist_y_slot <- rk.XML.varslot(label="Y Variable (for 2D)", source="hist_svy_selector", id.name="y_var"); attr(hist_y_slot, "source_property") <- "variables"
-  hist_z_slot <- rk.XML.varslot(label="Faceting Variable (for 3D)", source="hist_svy_selector", id.name="z_var"); attr(hist_z_slot, "source_property") <- "variables"
+  hist_facet_slot <- rk.XML.varslot(label="Faceting Variable (optional)", source="hist_svy_selector", id.name="z_var"); attr(hist_facet_slot, "source_property") <- "variables"
 
   hist_dialog <- rk.XML.dialog(label = "Survey Histogram", child = rk.XML.row(hist_svy_selector, rk.XML.col(
     rk.XML.tabbook(tabs=list(
-      "Data" = rk.XML.col(hist_svy_slot, hist_x_slot, hist_y_slot, hist_z_slot),
+      "Data" = rk.XML.col(hist_svy_slot, hist_x_slot, hist_facet_slot),
       "Labels" = labels_tab,
       "Style & Layout" = rk.XML.col(
-        rk.XML.spinbox(label="Number of bins", id.name="bins_spin", min=5, max=100, initial=30)
+        rk.XML.spinbox(label="X-axis text angle", id.name="spin_angle", min=0, max=90, initial=0),
+        rk.XML.spinbox(label="X-axis text vjust", id.name="spin_vjust", min=0, max=1, initial=0.5, real=TRUE)
       ),
       "Output Device" = device_tab
     )),
@@ -363,16 +389,12 @@ js_calc_hex <- paste(js_helpers, '
     var svy_obj = getValue("svy_object");
     if(!svy_obj) return;
     var x_var = getColumnName(getValue("x_var"));
-    var y_var = getColumnName(getValue("y_var"));
     var z_var = getColumnName(getValue("z_var"));
-    var plot_opts = ", bins=" + getValue("bins_spin");
 
-    var func_name = y_var ? (z_var ? "gghistweight3d_svy" : "gghistweight2d_svy") : "gghistweight_svy";
-    var plot_call = "ggsurvey::" + func_name + "(" + svy_obj + ", " + x_var;
-    if(y_var) { plot_call += ", " + y_var; }
-    if(z_var) { plot_call += ", " + z_var; }
-    plot_call += plot_opts + ")";
-    echo("p <- " + plot_call + "\\n");
+    echo("p <- ggsurvey::gghistweight_svy(" + svy_obj + ", " + x_var + ")\\n");
+    if(z_var){
+        echo("p <- p + ggplot2::facet_wrap( ~ " + z_var + ")\\n");
+    }
 
     var labs_list = new Array();
     if(getValue("title_input")) { labs_list.push("title = \\"" + getValue("title_input") + "\\""); }
@@ -381,6 +403,9 @@ js_calc_hex <- paste(js_helpers, '
     if(getValue("ylab_input")) { labs_list.push("y = \\"" + getValue("ylab_input") + "\\""); }
     if(getValue("caption_input")) { labs_list.push("caption = \\"" + getValue("caption_input") + "\\""); }
     if(labs_list.length > 0) { echo("p <- p + ggplot2::labs(" + labs_list.join(", ") + ")\\n"); }
+    if(getValue("spin_angle") && (getValue("spin_angle") != "0" || getValue("spin_vjust") != "0.5")) {
+        echo("p <- p + ggplot2::theme(axis.text.x = ggplot2::element_text(angle=" + getValue("spin_angle") + ", vjust=" + getValue("spin_vjust") + "))\\n");
+    }
   ')
 
   hist_component <- rk.plugin.component("Histogram", xml=list(dialog=hist_dialog), js=list(require=c("ggsurvey","ggplot2"), calculate=js_calc_hist, printout=js_print_graph), hierarchy = list("Survey","Graphs","ggGraphs"))

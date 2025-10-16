@@ -42,18 +42,29 @@
 						</column>
 					</tab>
 					<tab label="Style &amp; Layout" id="tab_StyleLyt">
-						<column id="clm_dBPFDF1S1X">
-							<dropdown id="pos_dropdown" label="Bar Position">
-								<option label="Fill (relative)" value="fill" checked="true" />
-								<option label="Dodge (side-by-side)" value="dodge" />
-							</dropdown>
+						<column id="clm_cFTRUE1F1S">
+							<checkbox id="cbox_fill" label="Fill bars with relative frequency (fill=TRUE)" value="1" checked="true" />
 							<checkbox id="cbox_flip" label="Flip coordinates" value="1" />
 							<checkbox id="cbox_legend" label="Show legend" value="1" checked="true" />
 							<spinbox label="X-axis text angle" id="spin_angle" min="0" max="90" />
-							<dropdown id="palette_input" label="Color Palette">
+							<spinbox label="X-axis text vjust" id="spin_vjust" initial="0.5" min="0" max="1" />
+							<dropdown id="palette_input" label="Color Palette (ColorBrewer)">
 								<option label="Default (Set1)" value="Set1" checked="true" />
-								<option label="Paired" value="Paired" />
-								<option label="Dark2" value="Dark2" />
+								<option label="Qualitative: Accent" value="Accent" />
+								<option label="Qualitative: Dark2" value="Dark2" />
+								<option label="Qualitative: Paired" value="Paired" />
+								<option label="Qualitative: Pastel1" value="Pastel1" />
+								<option label="Qualitative: Pastel2" value="Pastel2" />
+								<option label="Qualitative: Set2" value="Set2" />
+								<option label="Qualitative: Set3" value="Set3" />
+								<option label="Sequential: Blues" value="Blues" />
+								<option label="Sequential: Greens" value="Greens" />
+								<option label="Sequential: Oranges" value="Oranges" />
+								<option label="Sequential: Purples" value="Purples" />
+								<option label="Sequential: Reds" value="Reds" />
+								<option label="Diverging: RdYlBu" value="RdYlBu" />
+								<option label="Diverging: Spectral" value="Spectral" />
+								<option label="Diverging: BrBG" value="BrBG" />
 							</dropdown>
 						</column>
 					</tab>

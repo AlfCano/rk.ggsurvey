@@ -46,16 +46,12 @@ function calculate(is_preview){
     var svy_obj = getValue("svy_object");
     if(!svy_obj) return;
     var x_var = getColumnName(getValue("x_var"));
-    var y_var = getColumnName(getValue("y_var"));
     var z_var = getColumnName(getValue("z_var"));
-    var plot_opts = ", bins=" + getValue("bins_spin");
-
-    var func_name = y_var ? (z_var ? "gghistweight3d_svy" : "gghistweight2d_svy") : "gghistweight_svy";
-    var plot_call = "ggsurvey::" + func_name + "(" + svy_obj + ", " + x_var;
-    if(y_var) { plot_call += ", " + y_var; }
-    if(z_var) { plot_call += ", " + z_var; }
-    plot_call += plot_opts + ")";
-    echo("p <- " + plot_call + "\n");
+    
+    echo("p <- ggsurvey::gghistweight_svy(" + svy_obj + ", " + x_var + ")\n");
+    if(z_var){
+        echo("p <- p + ggplot2::facet_wrap( ~ " + z_var + ")\n");
+    }
 
     var labs_list = new Array();
     if(getValue("title_input")) { labs_list.push("title = \"" + getValue("title_input") + "\""); }
@@ -64,6 +60,9 @@ function calculate(is_preview){
     if(getValue("ylab_input")) { labs_list.push("y = \"" + getValue("ylab_input") + "\""); }
     if(getValue("caption_input")) { labs_list.push("caption = \"" + getValue("caption_input") + "\""); }
     if(labs_list.length > 0) { echo("p <- p + ggplot2::labs(" + labs_list.join(", ") + ")\n"); }
+    if(getValue("spin_angle") && (getValue("spin_angle") != "0" || getValue("spin_vjust") != "0.5")) { 
+        echo("p <- p + ggplot2::theme(axis.text.x = ggplot2::element_text(angle=" + getValue("spin_angle") + ", vjust=" + getValue("spin_vjust") + "))\n"); 
+    }
   
 }
 

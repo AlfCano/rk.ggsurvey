@@ -21,7 +21,9 @@
 		</setting>
 		<setting id="y_var">
 		</setting>
-		<setting id="z_var">
+		<setting id="a_var">
+		</setting>
+		<setting id="b_var">
 		</setting>
 		<caption id="tab_Labels" />
 		<setting id="title_input">
@@ -37,9 +39,11 @@
 		<setting id="caption_input">
 		</setting>
 		<caption id="tab_StyleLyt" />
-		<setting id="bins_spin">
-		</setting>
 		<setting id="palette_input">
+		</setting>
+		<setting id="spin_angle">
+		</setting>
+		<setting id="spin_vjust">
 		</setting>
 		<caption id="tab_OutptDvc" />
 		<setting id="device_type">

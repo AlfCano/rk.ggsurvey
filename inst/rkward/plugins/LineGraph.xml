@@ -35,13 +35,12 @@
 						</column>
 					</tab>
 					<tab label="Labels" id="tab_Labels">
-						<column id="clm_iPTSVXYYWT">
+						<column id="clm_inpPTSXYLC">
 							<input label="Plot Title" id="title_input" />
 							<input label="Subtitle" id="subtitle_input" />
-							<input label="Variable prefix to remove from legend" id="prefix_clean_input" />
-							<input label="X-axis label" id="xlab_input" initial="Year" />
-							<input label="Y-axis label" id="ylab_input" initial="Weighted Total" />
-							<input label="Color legend title" id="legend_title_input" initial="Category" />
+							<input label="X-axis label" id="xlab_input" />
+							<input label="Y-axis label" id="ylab_input" />
+							<input label="Legend title" id="legend_title_input" />
 							<input label="Caption" id="caption_input" />
 						</column>
 					</tab>
@@ -50,8 +49,21 @@
 							<spinbox label="Confidence level for error bars (%)" id="conf_level" initial="95" min="1" max="99" />
 							<dropdown id="palette_input" label="Color Palette (ColorBrewer)">
 								<option label="Default (Set1)" value="Set1" checked="true" />
-								<option label="Qualitative: Paired" value="Paired" />
+								<option label="Qualitative: Accent" value="Accent" />
 								<option label="Qualitative: Dark2" value="Dark2" />
+								<option label="Qualitative: Paired" value="Paired" />
+								<option label="Qualitative: Pastel1" value="Pastel1" />
+								<option label="Qualitative: Pastel2" value="Pastel2" />
+								<option label="Qualitative: Set2" value="Set2" />
+								<option label="Qualitative: Set3" value="Set3" />
+								<option label="Sequential: Blues" value="Blues" />
+								<option label="Sequential: Greens" value="Greens" />
+								<option label="Sequential: Oranges" value="Oranges" />
+								<option label="Sequential: Purples" value="Purples" />
+								<option label="Sequential: Reds" value="Reds" />
+								<option label="Diverging: RdYlBu" value="RdYlBu" />
+								<option label="Diverging: Spectral" value="Spectral" />
+								<option label="Diverging: BrBG" value="BrBG" />
 							</dropdown>
 							<dropdown id="facet_layout" label="Facet Layout">
 								<option label="Wrap (default)" value="wrap" checked="true" />

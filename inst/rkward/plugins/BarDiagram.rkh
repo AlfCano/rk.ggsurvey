@@ -37,13 +37,15 @@
 		<setting id="caption_input">
 		</setting>
 		<caption id="tab_StyleLyt" />
-		<setting id="pos_dropdown">
+		<setting id="cbox_fill">
 		</setting>
 		<setting id="cbox_flip">
 		</setting>
 		<setting id="cbox_legend">
 		</setting>
 		<setting id="spin_angle">
+		</setting>
+		<setting id="spin_vjust">
 		</setting>
 		<setting id="palette_input">
 		</setting>

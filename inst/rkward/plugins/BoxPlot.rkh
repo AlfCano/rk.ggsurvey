@@ -39,6 +39,10 @@
 		<caption id="tab_StyleLyt" />
 		<setting id="cbox_flip">
 		</setting>
+		<setting id="spin_angle">
+		</setting>
+		<setting id="spin_vjust">
+		</setting>
 		<caption id="tab_OutptDvc" />
 		<setting id="device_type">
 		</setting>

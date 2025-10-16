@@ -42,8 +42,10 @@
 						</column>
 					</tab>
 					<tab label="Style &amp; Layout" id="tab_StyleLyt">
-						<column id="clm_chckbxdcF1">
+						<column id="clm_cF1X090X05">
 							<checkbox id="cbox_flip" label="Flip coordinates" value="1" />
+							<spinbox label="X-axis text angle" id="spin_angle" min="0" max="90" />
+							<spinbox label="X-axis text vjust" id="spin_vjust" initial="0.5" min="0" max="1" />
 						</column>
 					</tab>
 					<tab label="Output Device" id="tab_OutptDvc">

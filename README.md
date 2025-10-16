@@ -1,5 +1,5 @@
 
-![Version](https://img.shields.io/badge/Version-0.1.0-green.svg)
+![Version](https://img.shields.io/badge/Version-0.1.2-green.svg)
 
 An RKWard plugin package to create a wide range of publication-quality visualizations from complex survey data, using the powerful `{ggsurvey}` and `{ggplot2}` packages.
 
