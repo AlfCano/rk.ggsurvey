@@ -44,37 +44,9 @@ function calculate(is_preview){
     }
    
     var svy_obj = getValue("svy_object");
-    if(!svy_obj) return;
     var x_var = getColumnName(getValue("x_var"));
-    var y_var = getColumnName(getValue("y_var"));
-    var a_var = getColumnName(getValue("a_var"));
-    var b_var = getColumnName(getValue("b_var"));
-
-    var plot_call = "";
-    if(b_var){
-      plot_call = "ggsurvey::gghexweight3d_svy(" + svy_obj + ", " + x_var + ", " + y_var + ", " + a_var + ", " + b_var + ")";
-    } else if (a_var) {
-      plot_call = "ggsurvey::gghexweight2d_svy(" + svy_obj + ", " + x_var + ", " + y_var + ", " + a_var + ")";
-    } else {
-      plot_call = "ggsurvey::gghexweight_svy(" + svy_obj + ", " + x_var + ", " + y_var + ")";
-    }
-    echo("p <- " + plot_call + "\n");
-
-    var labs_list = new Array();
-    if(getValue("title_input")) { labs_list.push("title = \"" + getValue("title_input") + "\""); }
-    if(getValue("subtitle_input")) { labs_list.push("subtitle = \"" + getValue("subtitle_input") + "\""); }
-    if(getValue("xlab_input")) { labs_list.push("x = \"" + getValue("xlab_input") + "\""); }
-    if(getValue("ylab_input")) { labs_list.push("y = \"" + getValue("ylab_input") + "\""); }
-    if(getValue("legend_title_input")) { labs_list.push("fill = \"" + getValue("legend_title_input") + "\""); }
-    if(getValue("caption_input")) { labs_list.push("caption = \"" + getValue("caption_input") + "\""); }
-    if(labs_list.length > 0) { echo("p <- p + ggplot2::labs(" + labs_list.join(", ") + ")\n"); }
-
-    if(getValue("palette_input")) {
-       echo("p <- p + ggplot2::scale_fill_viridis_c(option=\"" + getValue("palette_input") + "\")\n");
-    }
-    if(getValue("spin_angle") && (getValue("spin_angle") != "0" || getValue("spin_vjust") != "0.5")) {
-        echo("p <- p + ggplot2::theme(axis.text.x = ggplot2::element_text(angle=" + getValue("spin_angle") + ", vjust=" + getValue("spin_vjust") + "))\n");
-    }
+    if(!svy_obj) return;
+    echo("p <- ggsurvey::ggbarweight_svy(" + svy_obj + ", " + x_var + ")\n");
   
 }
 
@@ -87,21 +59,21 @@ function printout(is_preview){
 		new Header(i18n("Hexbin Plot results")).print();	
 	}
     if(!is_preview){
-      var graph_options = new Array();
+      var graph_options = [];
       graph_options.push("device.type=\"" + getValue("device_type") + "\"");
       graph_options.push("width=" + getValue("dev_width"));
       graph_options.push("height=" + getValue("dev_height"));
       graph_options.push("pointsize=10.0");
       graph_options.push("res=" + getValue("dev_res"));
       graph_options.push("bg=\"" + getValue("dev_bg") + "\"");
-      if(getValue("device_type") == "JPG"){
+      if(getValue("device_type") === "JPG"){
         graph_options.push("quality=" + getValue("jpg_quality"));
       }
-      echo("rk.graph.on(" + graph_options.join(", ") + ")\n");
+      echo("try(rk.graph.on(" + graph_options.join(", ") + "))\n");
     }
     echo("try(print(p))\n");
     if(!is_preview){
-      echo("rk.graph.off()\n");
+      echo("try(rk.graph.off())\n");
     }
   
 

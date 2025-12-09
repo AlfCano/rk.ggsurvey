@@ -4,9 +4,6 @@
 		this code was generated using the rkwarddev package.
 	perhaps don't make changes here, but in the rkwarddev script instead!
 	-->
-	<title>
-		Line Graph
-	</title>
 	<summary>
 	</summary>
 	<usage>
@@ -29,19 +26,25 @@
 		<setting id="se_vars">
 		</setting>
 		<caption id="tab_Labels" />
-		<setting id="title_input">
+		<setting id="plot_title">
 		</setting>
-		<setting id="prefix_clean_input">
+		<setting id="plot_subtitle">
 		</setting>
-		<setting id="subtitle_input">
+		<setting id="plot_xlab">
 		</setting>
-		<setting id="xlab_input">
+		<setting id="plot_xlab_wrap">
 		</setting>
-		<setting id="ylab_input">
+		<setting id="plot_ylab">
 		</setting>
-		<setting id="legend_title_input">
+		<setting id="plot_ylab_wrap">
 		</setting>
-		<setting id="caption_input">
+		<setting id="plot_legend_title">
+		</setting>
+		<setting id="legend_title_wrap_width">
+		</setting>
+		<setting id="legend_wrap_width">
+		</setting>
+		<setting id="plot_caption">
 		</setting>
 		<caption id="tab_StyleLyt" />
 		<setting id="conf_level">

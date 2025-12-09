@@ -19,36 +19,28 @@
 		</setting>
 		<setting id="x_var">
 		</setting>
-		<setting id="y_var">
-		</setting>
-		<setting id="z_var">
-		</setting>
 		<caption id="tab_Labels" />
-		<setting id="title_input">
+		<setting id="plot_title">
 		</setting>
-		<setting id="prefix_clean_input">
+		<setting id="plot_subtitle">
 		</setting>
-		<setting id="subtitle_input">
+		<setting id="plot_xlab">
 		</setting>
-		<setting id="xlab_input">
+		<setting id="plot_xlab_wrap">
 		</setting>
-		<setting id="ylab_input">
+		<setting id="plot_ylab">
 		</setting>
-		<setting id="legend_title_input">
+		<setting id="plot_ylab_wrap">
 		</setting>
-		<setting id="caption_input">
+		<setting id="plot_legend_title">
+		</setting>
+		<setting id="legend_title_wrap_width">
+		</setting>
+		<setting id="legend_wrap_width">
+		</setting>
+		<setting id="plot_caption">
 		</setting>
 		<caption id="tab_StyleLyt" />
-		<setting id="cbox_fill">
-		</setting>
-		<setting id="cbox_flip">
-		</setting>
-		<setting id="cbox_legend">
-		</setting>
-		<setting id="spin_angle">
-		</setting>
-		<setting id="spin_vjust">
-		</setting>
 		<setting id="palette_input">
 		</setting>
 		<caption id="tab_OutptDvc" />

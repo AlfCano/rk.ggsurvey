@@ -20,29 +20,32 @@
 	</logic>
 	<dialog label="Line Graph from svyby Object">
 		<row id="row_cDDXFESEXF">
-			<column id="clm_vrslctrdsv">
-				<varselector id="svyby_selector" label="svyby objects" />
+			<column id="clm_vrslctrdln">
+				<varselector id="line_svyby_selector" label="svyby objects" />
 			</column>
 			<column id="clm_tDDXFESEXF">
 				<tabbook>
 					<tab label="Data" id="tab_Data">
 						<column id="clm_vrsltXFESE">
-							<varslot id="svyby_object" label="svyby object to plot" source="svyby_selector" classes="data.frame" required="true" />
-							<varslot id="xaxis_var" label="X-axis variable (e.g., year)" source="svyby_selector" required="true" />
-							<varslot id="facet_var" label="Faceting variable (optional)" source="svyby_selector" />
-							<varslot id="estimate_vars" label="Estimate columns" source="svyby_selector" required="true" multi="true" />
-							<varslot id="se_vars" label="Standard Error columns" source="svyby_selector" required="true" multi="true" />
+							<varslot id="svyby_object" label="svyby object to plot" source="line_svyby_selector" classes="data.frame" required="true" />
+							<varslot id="xaxis_var" label="X-axis variable (e.g., year)" source="line_svyby_selector" required="true" />
+							<varslot id="facet_var" label="Faceting variable (optional)" source="line_svyby_selector" />
+							<varslot id="estimate_vars" label="Estimate columns" source="line_svyby_selector" required="true" multi="true" />
+							<varslot id="se_vars" label="Standard Error columns" source="line_svyby_selector" required="true" multi="true" />
 						</column>
 					</tab>
 					<tab label="Labels" id="tab_Labels">
-						<column id="clm_inPTVSXYLC">
-							<input label="Plot Title" id="title_input" />
-							<input label="Variable prefix to remove from legend" id="prefix_clean_input" />
-							<input label="Subtitle" id="subtitle_input" />
-							<input label="X-axis label" id="xlab_input" />
-							<input label="Y-axis label" id="ylab_input" />
-							<input label="Legend title" id="legend_title_input" />
-							<input label="Caption" id="caption_input" />
+						<column id="clm_iPTPSXLWXL">
+							<input label="Plot Title" id="plot_title" />
+							<input label="Plot Subtitle" id="plot_subtitle" />
+							<input label="X-axis Label (blank for auto)" id="plot_xlab" />
+							<spinbox label="Wrap X-axis Label at (chars, 0 to disable)" id="plot_xlab_wrap" min="0" max="100" />
+							<input label="Y-axis Label" id="plot_ylab" />
+							<spinbox label="Wrap Y-axis Label at (chars, 0 to disable)" id="plot_ylab_wrap" min="0" max="100" />
+							<input label="Legend Title (blank for auto)" id="plot_legend_title" />
+							<spinbox label="Wrap Legend Title at (chars, 0 to disable)" id="legend_title_wrap_width" initial="20" min="0" max="100" />
+							<spinbox label="Wrap Legend Labels at (chars, 0 to disable)" id="legend_wrap_width" initial="20" min="0" max="100" />
+							<input label="Plot Caption" id="plot_caption" />
 						</column>
 					</tab>
 					<tab label="Style &amp; Layout" id="tab_StyleLyt">
@@ -50,21 +53,20 @@
 							<spinbox label="Confidence level for error bars (%)" id="conf_level" initial="95" min="1" max="99" />
 							<dropdown id="palette_input" label="Color Palette (ColorBrewer)">
 								<option label="Default (Set1)" value="Set1" checked="true" />
-								<option label="Qualitative: Accent" value="Accent" />
-								<option label="Qualitative: Dark2" value="Dark2" />
-								<option label="Qualitative: Paired" value="Paired" />
-								<option label="Qualitative: Pastel1" value="Pastel1" />
-								<option label="Qualitative: Pastel2" value="Pastel2" />
-								<option label="Qualitative: Set2" value="Set2" />
-								<option label="Qualitative: Set3" value="Set3" />
-								<option label="Sequential: Blues" value="Blues" />
-								<option label="Sequential: Greens" value="Greens" />
-								<option label="Sequential: Oranges" value="Oranges" />
-								<option label="Sequential: Purples" value="Purples" />
-								<option label="Sequential: Reds" value="Reds" />
-								<option label="Diverging: RdYlBu" value="RdYlBu" />
-								<option label="Diverging: Spectral" value="Spectral" />
-								<option label="Diverging: BrBG" value="BrBG" />
+								<option label="Accent" value="Accent" />
+								<option label="Dark2" value="Dark2" />
+								<option label="Paired" value="Paired" />
+								<option label="Pastel1" value="Pastel1" />
+								<option label="Pastel2" value="Pastel2" />
+								<option label="Set2" value="Set2" />
+								<option label="Set3" value="Set3" />
+								<option label="Blues" value="Blues" />
+								<option label="Greens" value="Greens" />
+								<option label="Oranges" value="Oranges" />
+								<option label="Reds" value="Reds" />
+								<option label="Purples" value="Purples" />
+								<option label="RdYlBu" value="RdYlBu" />
+								<option label="Spectral" value="Spectral" />
 							</dropdown>
 							<dropdown id="facet_layout" label="Facet Layout">
 								<option label="Wrap (default)" value="wrap" checked="true" />
@@ -81,9 +83,9 @@
 								<option label="JPG" value="JPG" />
 							</dropdown>
 							<spinbox label="JPG Quality (0-100)" id="jpg_quality" initial="75" min="0" max="100" />
-							<spinbox label="Width (px)" id="dev_width" initial="720" min="100" max="4000" />
-							<spinbox label="Height (px)" id="dev_height" initial="720" min="100" max="4000" />
-							<spinbox label="Resolution (ppi)" id="dev_res" initial="125" min="50" max="600" />
+							<spinbox label="Width (px)" id="dev_width" initial="1024" min="100" max="4000" />
+							<spinbox label="Height (px)" id="dev_height" initial="724" min="100" max="4000" />
+							<spinbox label="Resolution (ppi)" id="dev_res" initial="200" min="50" max="600" />
 							<dropdown id="dev_bg" label="Background">
 								<option label="Transparent" value="transparent" checked="true" />
 								<option label="White" value="white" />

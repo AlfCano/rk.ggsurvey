@@ -4,8 +4,8 @@
 		this code was generated using the rkwarddev package.
 	perhaps don't make changes here, but in the rkwarddev script instead!
 	-->
-	<code file="MeansGraph.js" />
-	<help file="MeansGraph.rkh" />
+	<code file="ggGraphs.js" />
+	<help file="ggGraphs.rkh" />
 	<!--
 		<dependencies>
 		</dependencies>

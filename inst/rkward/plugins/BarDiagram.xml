@@ -21,51 +21,46 @@
 	<dialog label="Survey Bar Plot">
 		<row id="row_vSDODDSDOX">
 			<varselector id="bar_svy_selector" label="Survey Design Objects" />
-			<column id="clm_tDDSDOXVYV">
+			<column id="clm_tDDSDOXVSD">
 				<tabbook>
 					<tab label="Data" id="tab_Data">
-						<column id="clm_vSDOXVYVFV">
+						<column id="clm_vrsltSDOXV">
 							<varslot id="svy_object" label="Survey Design Object" source="bar_svy_selector" required="true" />
 							<varslot id="x_var" label="X Variable" source="bar_svy_selector" required="true" />
-							<varslot id="y_var" label="Y Variable (for crosstabs)" source="bar_svy_selector" />
-							<varslot id="z_var" label="Faceting Variable (for 3D)" source="bar_svy_selector" />
 						</column>
 					</tab>
 					<tab label="Labels" id="tab_Labels">
-						<column id="clm_inPTVSXYLC">
-							<input label="Plot Title" id="title_input" />
-							<input label="Variable prefix to remove from legend" id="prefix_clean_input" />
-							<input label="Subtitle" id="subtitle_input" />
-							<input label="X-axis label" id="xlab_input" />
-							<input label="Y-axis label" id="ylab_input" />
-							<input label="Legend title" id="legend_title_input" />
-							<input label="Caption" id="caption_input" />
+						<column id="clm_iPTPSXLWXL">
+							<input label="Plot Title" id="plot_title" />
+							<input label="Plot Subtitle" id="plot_subtitle" />
+							<input label="X-axis Label (blank for auto)" id="plot_xlab" />
+							<spinbox label="Wrap X-axis Label at (chars, 0 to disable)" id="plot_xlab_wrap" min="0" max="100" />
+							<input label="Y-axis Label" id="plot_ylab" />
+							<spinbox label="Wrap Y-axis Label at (chars, 0 to disable)" id="plot_ylab_wrap" min="0" max="100" />
+							<input label="Legend Title (blank for auto)" id="plot_legend_title" />
+							<spinbox label="Wrap Legend Title at (chars, 0 to disable)" id="legend_title_wrap_width" initial="20" min="0" max="100" />
+							<spinbox label="Wrap Legend Labels at (chars, 0 to disable)" id="legend_wrap_width" initial="20" min="0" max="100" />
+							<input label="Plot Caption" id="plot_caption" />
 						</column>
 					</tab>
 					<tab label="Style &amp; Layout" id="tab_StyleLyt">
-						<column id="clm_cFTRUE1F1S">
-							<checkbox id="cbox_fill" label="Fill bars with relative frequency (fill=TRUE)" value="1" checked="true" />
-							<checkbox id="cbox_flip" label="Flip coordinates" value="1" />
-							<checkbox id="cbox_legend" label="Show legend" value="1" checked="true" />
-							<spinbox label="X-axis text angle" id="spin_angle" min="0" max="90" />
-							<spinbox label="X-axis text vjust" id="spin_vjust" initial="0.5" min="0" max="1" />
+						<column id="clm_dCPCBDS1S1">
 							<dropdown id="palette_input" label="Color Palette (ColorBrewer)">
 								<option label="Default (Set1)" value="Set1" checked="true" />
-								<option label="Qualitative: Accent" value="Accent" />
-								<option label="Qualitative: Dark2" value="Dark2" />
-								<option label="Qualitative: Paired" value="Paired" />
-								<option label="Qualitative: Pastel1" value="Pastel1" />
-								<option label="Qualitative: Pastel2" value="Pastel2" />
-								<option label="Qualitative: Set2" value="Set2" />
-								<option label="Qualitative: Set3" value="Set3" />
-								<option label="Sequential: Blues" value="Blues" />
-								<option label="Sequential: Greens" value="Greens" />
-								<option label="Sequential: Oranges" value="Oranges" />
-								<option label="Sequential: Purples" value="Purples" />
-								<option label="Sequential: Reds" value="Reds" />
-								<option label="Diverging: RdYlBu" value="RdYlBu" />
-								<option label="Diverging: Spectral" value="Spectral" />
-								<option label="Diverging: BrBG" value="BrBG" />
+								<option label="Accent" value="Accent" />
+								<option label="Dark2" value="Dark2" />
+								<option label="Paired" value="Paired" />
+								<option label="Pastel1" value="Pastel1" />
+								<option label="Pastel2" value="Pastel2" />
+								<option label="Set2" value="Set2" />
+								<option label="Set3" value="Set3" />
+								<option label="Blues" value="Blues" />
+								<option label="Greens" value="Greens" />
+								<option label="Oranges" value="Oranges" />
+								<option label="Reds" value="Reds" />
+								<option label="Purples" value="Purples" />
+								<option label="RdYlBu" value="RdYlBu" />
+								<option label="Spectral" value="Spectral" />
 							</dropdown>
 						</column>
 					</tab>
@@ -77,9 +72,9 @@
 								<option label="JPG" value="JPG" />
 							</dropdown>
 							<spinbox label="JPG Quality (0-100)" id="jpg_quality" initial="75" min="0" max="100" />
-							<spinbox label="Width (px)" id="dev_width" initial="720" min="100" max="4000" />
-							<spinbox label="Height (px)" id="dev_height" initial="720" min="100" max="4000" />
-							<spinbox label="Resolution (ppi)" id="dev_res" initial="125" min="50" max="600" />
+							<spinbox label="Width (px)" id="dev_width" initial="1024" min="100" max="4000" />
+							<spinbox label="Height (px)" id="dev_height" initial="724" min="100" max="4000" />
+							<spinbox label="Resolution (ppi)" id="dev_res" initial="200" min="50" max="600" />
 							<dropdown id="dev_bg" label="Background">
 								<option label="Transparent" value="transparent" checked="true" />
 								<option label="White" value="white" />

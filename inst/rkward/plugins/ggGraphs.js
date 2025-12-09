@@ -10,6 +10,14 @@ function preview(){
 function preprocess(is_preview){
 	// add requirements etc. here
 	if(is_preview) {
+		echo("if(!base::require(survey)){stop(" + i18n("Preview not available, because package survey is not installed or cannot be loaded.") + ")}\n");
+	} else {
+		echo("require(survey)\n");
+	}	if(is_preview) {
+		echo("if(!base::require(dplyr)){stop(" + i18n("Preview not available, because package dplyr is not installed or cannot be loaded.") + ")}\n");
+	} else {
+		echo("require(dplyr)\n");
+	}	if(is_preview) {
 		echo("if(!base::require(ggplot2)){stop(" + i18n("Preview not available, because package ggplot2 is not installed or cannot be loaded.") + ")}\n");
 	} else {
 		echo("require(ggplot2)\n");
@@ -17,10 +25,6 @@ function preprocess(is_preview){
 		echo("if(!base::require(tidyr)){stop(" + i18n("Preview not available, because package tidyr is not installed or cannot be loaded.") + ")}\n");
 	} else {
 		echo("require(tidyr)\n");
-	}	if(is_preview) {
-		echo("if(!base::require(dplyr)){stop(" + i18n("Preview not available, because package dplyr is not installed or cannot be loaded.") + ")}\n");
-	} else {
-		echo("require(dplyr)\n");
 	}	if(is_preview) {
 		echo("if(!base::require(forcats)){stop(" + i18n("Preview not available, because package forcats is not installed or cannot be loaded.") + ")}\n");
 	} else {
@@ -224,7 +228,7 @@ function printout(is_preview){
 
 	// printout the results
 	if(!is_preview) {
-		new Header(i18n("Means Graph results")).print();	
+		new Header(i18n("ggGraphs results")).print();	
 	}
     if(!is_preview){
       var graph_options = [];
