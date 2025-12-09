@@ -2,8 +2,8 @@ Package: rk.ggsurvey
 Type: Package
 Title: A plugin package analyze complex survey designs with custom
         plugins and the 'ggsurvey' package.
-Version: 0.1.3
-Date: 2025-10-15
+Version: 0.1.4
+Date: 2025-12-09
 Author: Alfonso Cano
 Maintainer: Alfonso Cano <alfonso.cano@correo.buap.mx>
 Enhances: rkward

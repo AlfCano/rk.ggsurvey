@@ -1,0 +1,99 @@
+<!DOCTYPE rkplugin >
+<document>
+	<!--
+		this code was generated using the rkwarddev package.
+	perhaps don't make changes here, but in the rkwarddev script instead!
+	-->
+	<code file="MeansGraph.js" />
+	<help file="MeansGraph.rkh" />
+	<!--
+		<dependencies>
+		</dependencies>
+	-->
+	<logic>
+		<!--
+			<convert id="!edit!" sources="!edit!" mode="equals" standard="!edit!" />
+		-->
+		<!--
+			<connect governor="!edit!.state" client="!edit!.enabled" />
+		-->
+	</logic>
+	<dialog label="Means Graph from svyby Object">
+		<row id="row_cDDXFESEXF">
+			<column id="clm_vrslctrdmn">
+				<varselector id="means_svyby_selector" label="svyby objects" />
+			</column>
+			<column id="clm_tDDXFESEXF">
+				<tabbook>
+					<tab label="Data" id="tab_Data">
+						<column id="clm_vrsltXFESE">
+							<varslot id="svyby_object" label="svyby object to plot" source="means_svyby_selector" classes="data.frame" required="true" />
+							<varslot id="xaxis_var" label="X-axis variable (e.g., year)" source="means_svyby_selector" required="true" />
+							<varslot id="facet_var" label="Faceting variable (optional)" source="means_svyby_selector" />
+							<varslot id="estimate_vars" label="Estimate columns" source="means_svyby_selector" required="true" multi="true" />
+							<varslot id="se_vars" label="Standard Error columns" source="means_svyby_selector" required="true" multi="true" />
+						</column>
+					</tab>
+					<tab label="Labels" id="tab_Labels">
+						<column id="clm_inPTVSXYLC">
+							<input label="Plot Title" id="title_input" />
+							<input label="Variable prefix to remove from legend" id="prefix_clean_input" />
+							<input label="Subtitle" id="subtitle_input" />
+							<input label="X-axis label" id="xlab_input" />
+							<input label="Y-axis label" id="ylab_input" />
+							<input label="Legend title" id="legend_title_input" />
+							<input label="Caption" id="caption_input" />
+						</column>
+					</tab>
+					<tab label="Style &amp; Layout" id="tab_StyleLyt">
+						<column id="clm_cF1C95199C">
+							<checkbox id="cbox_flip" label="Flip coordinates" value="1" />
+							<spinbox label="Confidence level for error bars (%)" id="conf_level" initial="95" min="1" max="99" />
+							<dropdown id="palette_input" label="Color Palette (ColorBrewer)">
+								<option label="Default (Set1)" value="Set1" checked="true" />
+								<option label="Qualitative: Accent" value="Accent" />
+								<option label="Qualitative: Dark2" value="Dark2" />
+								<option label="Qualitative: Paired" value="Paired" />
+								<option label="Qualitative: Pastel1" value="Pastel1" />
+								<option label="Qualitative: Pastel2" value="Pastel2" />
+								<option label="Qualitative: Set2" value="Set2" />
+								<option label="Qualitative: Set3" value="Set3" />
+								<option label="Sequential: Blues" value="Blues" />
+								<option label="Sequential: Greens" value="Greens" />
+								<option label="Sequential: Oranges" value="Oranges" />
+								<option label="Sequential: Purples" value="Purples" />
+								<option label="Sequential: Reds" value="Reds" />
+								<option label="Diverging: RdYlBu" value="RdYlBu" />
+								<option label="Diverging: Spectral" value="Spectral" />
+								<option label="Diverging: BrBG" value="BrBG" />
+							</dropdown>
+							<dropdown id="facet_layout" label="Facet Layout">
+								<option label="Wrap (default)" value="wrap" checked="true" />
+								<option label="Force to one row" value="row" />
+								<option label="Force to one column" value="col" />
+							</dropdown>
+						</column>
+					</tab>
+					<tab label="Output Device" id="tab_OutptDvc">
+						<column id="clm_dDPNGPNGSV">
+							<dropdown id="device_type" label="Device type">
+								<option label="PNG" value="PNG" checked="true" />
+								<option label="SVG" value="SVG" />
+								<option label="JPG" value="JPG" />
+							</dropdown>
+							<spinbox label="JPG Quality (0-100)" id="jpg_quality" initial="75" min="0" max="100" />
+							<spinbox label="Width (px)" id="dev_width" initial="720" min="100" max="4000" />
+							<spinbox label="Height (px)" id="dev_height" initial="720" min="100" max="4000" />
+							<spinbox label="Resolution (ppi)" id="dev_res" initial="125" min="50" max="600" />
+							<dropdown id="dev_bg" label="Background">
+								<option label="Transparent" value="transparent" checked="true" />
+								<option label="White" value="white" />
+							</dropdown>
+						</column>
+					</tab>
+				</tabbook>
+				<preview label="Preview" id="plot_preview" />
+			</column>
+		</row>
+	</dialog>
+</document>

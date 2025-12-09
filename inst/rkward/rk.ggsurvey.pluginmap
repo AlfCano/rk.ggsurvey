@@ -20,8 +20,8 @@
 		name="rk.ggsurvey"
 		shortinfo="A plugin package analyze complex survey designs with custom plugins and the 'ggsurvey' package."
 		longinfo="A plugin package analyze complex survey designs with custom plugins and the 'ggsurvey' package."
-		version="0.1.3"
-		releasedate="2025-10-15"
+		version="0.1.4"
+		releasedate="2025-12-09"
 		url="https://github.com/AlfCano/rk.ggsurvey"
 		license="GPL (&gt;= 3)"
 	>
@@ -65,6 +65,13 @@
 			label="Histogram"
 			type="standard"
 			file="plugins/Histogram.xml"
+		>
+		</component>
+		<component
+			id="cmp_LineGraphMeansGraph"
+			label="Means Graph"
+			type="standard"
+			file="plugins/MeansGraph.xml"
 		>
 		</component>
 		<component
@@ -144,6 +151,24 @@
 				>
 					<entry
 						component="cmp_LineGraphHistogram"
+					/>
+				</menu>
+			</menu>
+		</menu>
+		<menu
+			id="men_Survey"
+			label="Survey"
+		>
+			<menu
+				id="men_Graphs"
+				label="Graphs"
+			>
+				<menu
+					id="men_ggGraphs"
+					label="ggGraphs"
+				>
+					<entry
+						component="cmp_LineGraphMeansGraph"
 					/>
 				</menu>
 			</menu>

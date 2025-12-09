@@ -15,7 +15,7 @@ local({
     ),
     about = list(
       desc = "A plugin package analyze complex survey designs with custom plugins and the 'ggsurvey' package.",
-      version = "0.1.3",
+      version = "0.1.4",
       url = "https://github.com/AlfCano/rk.ggsurvey",
       license = "GPL (>= 3)"
     )
@@ -83,7 +83,6 @@ local({
     }
   '
 
-  # --- CHANGE: Expanded Color Palette Dropdown ---
   color_palette_dropdown <- rk.XML.dropdown(label="Color Palette (ColorBrewer)", id.name="palette_input", options=list(
     "Default (Set1)"=list(val="Set1",chk=TRUE),
     "Qualitative: Accent"=list(val="Accent"),
@@ -123,7 +122,7 @@ local({
           "Labels" = labels_tab,
           "Style & Layout" = rk.XML.col(
             rk.XML.spinbox(label="Confidence level for error bars (%)", id.name="conf_level", min=1, max=99, initial=95),
-            color_palette_dropdown, # Using the new expanded dropdown
+            color_palette_dropdown,
             rk.XML.dropdown(label="Facet Layout", id.name="facet_layout", options=list(
               "Wrap (default)"=list(val="wrap",chk=TRUE), "Force to one row"=list(val="row"), "Force to one column"=list(val="col")
             ))
@@ -213,7 +212,7 @@ local({
         rk.XML.cbox(label="Show legend", value="1", id.name="cbox_legend", chk=TRUE),
         rk.XML.spinbox(label="X-axis text angle", id.name="spin_angle", min=0, max=90, initial=0),
         rk.XML.spinbox(label="X-axis text vjust", id.name="spin_vjust", min=0, max=1, initial=0.5, real=TRUE),
-        color_palette_dropdown # Using the new expanded dropdown
+        color_palette_dropdown
       ),
       "Output Device" = device_tab
     )),
@@ -412,13 +411,110 @@ local({
   hist_component <- rk.plugin.component("Histogram", xml=list(dialog=hist_dialog), js=list(require=c("ggsurvey","ggplot2"), calculate=js_calc_hist, printout=js_print_graph), hierarchy = list("Survey","Graphs","ggGraphs"))
 
   # =========================================================================================
+  # Component 6: Means Graph (NEW)
+  # =========================================================================================
+  means_svyby_selector <- rk.XML.varselector(id.name = "means_svyby_selector", label = "svyby objects")
+  means_svyby_slot <- rk.XML.varslot(label = "svyby object to plot", source = "means_svyby_selector", required = TRUE, id.name = "svyby_object", classes="data.frame")
+  means_xaxis_slot <- rk.XML.varslot(label = "X-axis variable (e.g., year)", source = "means_svyby_selector", required = TRUE, id.name = "xaxis_var")
+  means_facet_slot <- rk.XML.varslot(label = "Faceting variable (optional)", source = "means_svyby_selector", id.name = "facet_var")
+  means_est_slot <- rk.XML.varslot(label = "Estimate columns", source = "means_svyby_selector", multi=TRUE, required = TRUE, id.name = "estimate_vars")
+  means_se_slot <- rk.XML.varslot(label = "Standard Error columns", source = "means_svyby_selector", multi=TRUE, required = TRUE, id.name = "se_vars")
+
+  means_dialog <- rk.XML.dialog(
+    label = "Means Graph from svyby Object",
+    child = rk.XML.row(
+      rk.XML.col(means_svyby_selector),
+      rk.XML.col(
+        rk.XML.tabbook(tabs=list(
+          "Data" = rk.XML.col(means_svyby_slot, means_xaxis_slot, means_facet_slot, means_est_slot, means_se_slot),
+          "Labels" = labels_tab,
+          "Style & Layout" = rk.XML.col(
+             rk.XML.cbox(label="Flip coordinates", value="1", id.name="cbox_flip"),
+             rk.XML.spinbox(label="Confidence level for error bars (%)", id.name="conf_level", min=1, max=99, initial=95),
+             color_palette_dropdown,
+             rk.XML.dropdown(label="Facet Layout", id.name="facet_layout", options=list(
+              "Wrap (default)"=list(val="wrap",chk=TRUE), "Force to one row"=list(val="row"), "Force to one column"=list(val="col")
+            ))
+          ),
+          "Output Device" = device_tab
+        )),
+        rk.XML.preview(id.name="plot_preview")
+      )
+    )
+  )
+
+  js_calc_means <- paste(js_helpers, '
+    var svyby_obj = getValue("svyby_object");
+    if(!svyby_obj) return;
+    var xaxis_clean = getColumnName(getValue("xaxis_var"));
+    var estimate_vars_full = getValue("estimate_vars");
+    var se_vars_full = getValue("se_vars");
+    var prefix_clean = getValue("prefix_clean_input");
+    var facet_var_full = getValue("facet_var");
+    var conf_level = getValue("conf_level") / 100;
+
+    echo("ci_multiplier <- qnorm(1 - (1 - " + conf_level + ") / 2)\\n");
+
+    var estimate_array = estimate_vars_full.split(/\\n/).filter(function(n){ return n != "" }).map(function(item) { return "\\"" + getColumnName(item) + "\\""; });
+    var se_array = se_vars_full.split(/\\n/).filter(function(n){ return n != "" }).map(function(item) { return "\\"" + getColumnName(item) + "\\""; });
+
+    var by_vars = new Array();
+    by_vars.push("\\"" + xaxis_clean + "\\"");
+    by_vars.push("\\"respuesta\\"");
+    var facet_clean = "";
+    if(facet_var_full){
+      facet_clean = getColumnName(facet_var_full);
+      by_vars.push("\\"" + facet_clean + "\\"");
+    }
+
+    echo("est <- " + svyby_obj + "\\n");
+    echo("piv1 <- tidyr::pivot_longer(est, cols=dplyr::all_of(c(" + estimate_array.join(",") + ")), names_to = \\"respuesta\\", values_to = \\"recuento\\")\\n");
+    echo("piv2 <- tidyr::pivot_longer(est, cols=dplyr::all_of(c(" + se_array.join(",") + ")), names_to = \\"variable\\", values_to = \\"se\\")\\n");
+    echo("piv2 <- dplyr::mutate(piv2, respuesta = stringr::str_remove(variable, \\"^se\\\\\\\\.\\"))\\n");
+    echo("piv3 <- dplyr::left_join(piv1, piv2, by = c(" + by_vars.join(", ") + "))\\n");
+
+    if(prefix_clean){
+      echo("piv3[[\\"respuesta\\"]] <- gsub(\\"" + prefix_clean + "\\", \\"\\", piv3[[\\"respuesta\\"]] )\\n");
+    }
+    echo("piv3[[\\"respuesta\\"]] <- forcats::fct_rev(piv3[[\\"respuesta\\"]] )\\n");
+
+    echo("p <- ggplot2::ggplot(piv3, ggplot2::aes(x = " + xaxis_clean + ", y = recuento, color = respuesta, group = respuesta)) +\\n");
+    echo("  ggplot2::geom_point(size=2) +\\n");
+    echo("  ggplot2::geom_errorbar(ggplot2::aes(ymin = recuento - ci_multiplier*se, ymax = recuento + ci_multiplier*se), width = 0.2) +\\n");
+    echo("  ggplot2::scale_color_brewer(palette = \\"" + getValue("palette_input") + "\\", labels = function(x) stringr::str_wrap(x, width = 20)) +\\n");
+
+    var labs_list = new Array();
+    if(getValue("title_input")) { labs_list.push("title = \\"" + getValue("title_input") + "\\""); }
+    if(getValue("subtitle_input")) { labs_list.push("subtitle = \\"" + getValue("subtitle_input") + "\\""); }
+    if(getValue("xlab_input")) { labs_list.push("x = \\"" + getValue("xlab_input") + "\\""); }
+    if(getValue("ylab_input")) { labs_list.push("y = \\"" + getValue("ylab_input") + "\\""); }
+    if(getValue("legend_title_input")) { labs_list.push("color = \\"" + getValue("legend_title_input") + "\\""); }
+    if(getValue("caption_input")) { labs_list.push("caption = \\"" + getValue("caption_input") + "\\""); }
+    if(labs_list.length > 0) { echo("  ggplot2::labs(" + labs_list.join(", ") + ") +\\n"); }
+
+    echo("  ggplot2::theme_bw()\\n");
+
+    if(getValue("cbox_flip") == "1") { echo("p <- p + ggplot2::coord_flip()\\n"); }
+
+    if(facet_var_full){
+      var facet_layout = getValue("facet_layout");
+      var facet_opts = "";
+      if (facet_layout == "row") { facet_opts = ", nrow = 1"; }
+      else if (facet_layout == "col") { facet_opts = ", ncol = 1"; }
+      echo("p <- p + ggplot2::facet_wrap(~ " + facet_clean + facet_opts + ")\\n");
+    }
+  ')
+  means_component <- rk.plugin.component("Means Graph", xml=list(dialog=means_dialog), js=list(require=c("ggplot2", "tidyr", "dplyr", "forcats", "stringr", "RColorBrewer"), calculate=js_calc_means, printout=js_print_graph), hierarchy = list("Survey","Graphs","ggGraphs"))
+
+  # =========================================================================================
   # Final Plugin Skeleton Call
   # =========================================================================================
   all_components <- list(
     bar_component,
     box_component,
     hex_component,
-    hist_component
+    hist_component,
+    means_component
   )
 
   rk.plugin.skeleton(
@@ -439,7 +535,7 @@ local({
     show = FALSE
   )
 
-  cat("\nFully optimized plugin package 'rk.ggsurvey' with 5 plugins generated.\n\nTo complete installation:\n\n")
+  cat("\nFully optimized plugin package 'rk.ggsurvey' with 6 plugins generated.\n\nTo complete installation:\n\n")
   cat("  rk.updatePluginMessages(plugin.dir=\"rk.ggsurvey\")\n\n")
   cat("  devtools::install(\"rk.ggsurvey\")\n")
 })

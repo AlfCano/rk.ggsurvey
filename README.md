@@ -1,5 +1,4 @@
-
-![Version](https://img.shields.io/badge/Version-0.1.3-green.svg)
+![Version](https://img.shields.io/badge/Version-0.1.4-green.svg)
 
 An RKWard plugin package to create a wide range of publication-quality visualizations from complex survey data, using the powerful `{ggsurvey}` and `{ggplot2}` packages.
 
@@ -7,30 +6,35 @@ This package provides a user-friendly graphical interface for several `ggsurvey`
 
 ## Features
 
-This package provides five powerful and highly customizable plotting plugins:
+This package provides six powerful and highly customizable plotting plugins:
 
 1.  **Line Graph from svyby Object**:
     *   Ideal for visualizing trends over time from pre-calculated `svyby` results.
     *   Supports error bars based on user-defined confidence levels.
     *   Allows for faceting by an additional variable.
 
-2.  **Bar Diagram**:
+2.  **Means Graph from svyby Object**:
+    *   Visualizes point estimates and confidence intervals using a clean dot plot style.
+    *   A preferred alternative to bar charts for displaying means with uncertainty.
+    *   Supports coordinate flipping (useful for long category labels) and faceting.
+
+3.  **Bar Diagram**:
     *   Intelligently switches between functions based on the number of variables provided:
         *   **1 Variable**: Creates a weighted bar plot (`ggbarweight_svy`).
         *   **2 Variables**: Creates a crosstab bar plot (`ggbarcrosstabs_svy`) with `fill` or `dodge` positions.
         *   **3 Variables**: Creates a faceted 3D crosstab bar plot (`ggbarcrosstabs3d_svy`).
     *   Supports coordinate flipping for horizontal bars.
 
-3.  **Box Plot**:
+4.  **Box Plot**:
     *   Creates weighted boxplots for visualizing distributions.
     *   Switches between `ggboxweight_svy` (1D), `ggboxweight2d_svy` (2D), and `ggboxweight3d_svy` (3D with facets) based on input.
 
-4.  **Hexbin Plot**:
+5.  **Hexbin Plot**:
     *   Creates weighted 2D density plots using hexagonal bins, ideal for large datasets.
     *   Switches between `gghexweight_svy`, `gghexweight2d_svy`, and `gghexweight3d_svy`.
     *   Allows customization of bin size and `viridis` color palettes.
 
-5.  **Histogram**:
+6.  **Histogram**:
     *   Creates weighted histograms to explore variable distributions.
     *   Switches between `gghistweight_svy`, `gghistweight2d_svy`, and `gghistweight3d_svy`.
     *   Allows customization of bin count.
@@ -68,8 +72,9 @@ Once installed, the plugins will be available in the RKWard menu under:
 
 **`Survey` -> `Graphs` -> `ggGraphs`**
 
-You will see the five new plotting options:
+You will see the six plotting options:
 -   Line Graph
+-   Means Graph
 -   Bar Diagram
 -   Box Plot
 -   Hexbin Plot
@@ -99,8 +104,3 @@ Alfonso Cano
 ## License
 
 GPL (>= 3)
-
-## Author
-
-* Alfonso Cano (alfonso.cano@correo.buap.mx)  
-* Assisted by Gemini, a large language model from Google.
