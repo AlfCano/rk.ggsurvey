@@ -77,20 +77,25 @@ function calculate(is_preview){
     var estimate_array = estimate_vars_full.split(/\n/).filter(function(n){ return n != "" }).map(function(item) { return "\"" + getColumnName(item) + "\""; });
     var se_array = se_vars_full.split(/\n/).filter(function(n){ return n != "" }).map(function(item) { return "\"" + getColumnName(item) + "\""; });
 
-    var by_vars = new Array();
-    by_vars.push("\"" + xaxis_clean + "\"");
-    by_vars.push("\"respuesta\"");
-    var facet_clean = "";
+    var id_vars = new Array();
+    id_vars.push("\"" + xaxis_clean + "\"");
     if(facet_var_full){
-      facet_clean = getColumnName(facet_var_full);
-      by_vars.push("\"" + facet_clean + "\"");
+      id_vars.push("\"" + getColumnName(facet_var_full) + "\"");
     }
 
+    // Force selection to avoid collision
     echo("est <- " + svyby_obj + "\n");
-    echo("piv1 <- tidyr::pivot_longer(est, cols=dplyr::all_of(c(" + estimate_array.join(",") + ")), names_to = \"respuesta\", values_to = \"recuento\")\n");
-    echo("piv2 <- tidyr::pivot_longer(est, cols=dplyr::all_of(c(" + se_array.join(",") + ")), names_to = \"variable\", values_to = \"se\")\n");
-    echo("piv2 <- dplyr::mutate(piv2, respuesta = stringr::str_remove(variable, \"^se\\\\.\"))\n");
-    echo("piv3 <- dplyr::left_join(piv1, piv2, by = c(" + by_vars.join(", ") + "))\n");
+    echo("piv1 <- est %>% dplyr::select(dplyr::all_of(c(" + id_vars.join(",") + ", " + estimate_array.join(",") + "))) %>% tidyr::pivot_longer(cols=dplyr::all_of(c(" + estimate_array.join(",") + ")), names_to = \"respuesta\", values_to = \"recuento\")\n");
+    echo("piv2 <- est %>% dplyr::select(dplyr::all_of(c(" + id_vars.join(",") + ", " + se_array.join(",") + "))) %>% tidyr::pivot_longer(cols=dplyr::all_of(c(" + se_array.join(",") + ")), names_to = \"variable\", values_to = \"se\")\n");
+
+    // Robust join matching
+    if (estimate_array.length == 1 && se_array.length == 1) {
+       echo("piv2 <- dplyr::mutate(piv2, respuesta = " + estimate_array[0] + ")\n");
+    } else {
+       echo("piv2 <- dplyr::mutate(piv2, respuesta = stringr::str_remove(variable, \"^se\\\\.\"))\n");
+    }
+
+    echo("piv3 <- dplyr::left_join(piv1, piv2, by = c(" + id_vars.join(", ") + ", \"respuesta\"))\n");
 
     if(prefix_clean){
       echo("piv3[[\"respuesta\"]] <- gsub(\"" + prefix_clean + "\", \"\", piv3[[\"respuesta\"]] )\n");
@@ -117,7 +122,7 @@ function calculate(is_preview){
       var facet_opts = "";
       if (facet_layout == "row") { facet_opts = ", nrow = 1"; }
       else if (facet_layout == "col") { facet_opts = ", ncol = 1"; }
-      echo("p <- p + ggplot2::facet_wrap(~ " + facet_clean + facet_opts + ")\n");
+      echo("p <- p + ggplot2::facet_wrap(~ " + getColumnName(facet_var_full) + facet_opts + ")\n");
     }
   
 }

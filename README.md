@@ -1,4 +1,4 @@
-![Version](https://img.shields.io/badge/Version-0.1.4-green.svg)
+![Version](https://img.shields.io/badge/Version-0.1.5-green.svg)
 
 An RKWard plugin package to create a wide range of publication-quality visualizations from complex survey data, using the powerful `{ggsurvey}` and `{ggplot2}` packages.
 
@@ -14,9 +14,10 @@ This package provides six powerful and highly customizable plotting plugins:
     *   Allows for faceting by an additional variable.
 
 2.  **Means Graph from svyby Object**:
-    *   Visualizes point estimates and confidence intervals using a clean dot plot style.
-    *   A preferred alternative to bar charts for displaying means with uncertainty.
-    *   Supports coordinate flipping (useful for long category labels) and faceting.
+    *   Visualizes point estimates and confidence intervals using a clean dot plot style (point + error bar).
+    *   A superior alternative to bar charts for displaying means with uncertainty.
+    *   Robust handling of single-variable or multi-variable inputs.
+    *   Supports coordinate flipping (great for long category labels) and faceting.
 
 3.  **Bar Diagram**:
     *   Intelligently switches between functions based on the number of variables provided:

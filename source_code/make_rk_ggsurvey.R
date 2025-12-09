@@ -15,7 +15,7 @@ local({
     ),
     about = list(
       desc = "A plugin package analyze complex survey designs with custom plugins and the 'ggsurvey' package.",
-      version = "0.1.4",
+      version = "0.1.5", # Updated Version
       url = "https://github.com/AlfCano/rk.ggsurvey",
       license = "GPL (>= 3)"
     )
@@ -103,7 +103,7 @@ local({
   ))
 
   # =========================================================================================
-  # Main Plugin: Line Graph for svyby
+  # Component 1: Line Graph
   # =========================================================================================
   svyby_selector <- rk.XML.varselector(id.name = "svyby_selector", label = "svyby objects")
   svyby_object_slot <- rk.XML.varslot(label = "svyby object to plot", source = "svyby_selector", required = TRUE, id.name = "svyby_object", classes="data.frame")
@@ -149,20 +149,25 @@ local({
     var estimate_array = estimate_vars_full.split(/\\n/).filter(function(n){ return n != "" }).map(function(item) { return "\\"" + getColumnName(item) + "\\""; });
     var se_array = se_vars_full.split(/\\n/).filter(function(n){ return n != "" }).map(function(item) { return "\\"" + getColumnName(item) + "\\""; });
 
-    var by_vars = new Array();
-    by_vars.push("\\"" + xaxis_clean + "\\"");
-    by_vars.push("\\"respuesta\\"");
-    var facet_clean = "";
+    var id_vars = new Array();
+    id_vars.push("\\"" + xaxis_clean + "\\"");
     if(facet_var_full){
-      facet_clean = getColumnName(facet_var_full);
-      by_vars.push("\\"" + facet_clean + "\\"");
+      id_vars.push("\\"" + getColumnName(facet_var_full) + "\\"");
     }
 
+    // Force selection to avoid collision
     echo("est <- " + svyby_obj + "\\n");
-    echo("piv1 <- tidyr::pivot_longer(est, cols=dplyr::all_of(c(" + estimate_array.join(",") + ")), names_to = \\"respuesta\\", values_to = \\"recuento\\")\\n");
-    echo("piv2 <- tidyr::pivot_longer(est, cols=dplyr::all_of(c(" + se_array.join(",") + ")), names_to = \\"variable\\", values_to = \\"se\\")\\n");
-    echo("piv2 <- dplyr::mutate(piv2, respuesta = stringr::str_remove(variable, \\"^se\\\\\\\\.\\"))\\n");
-    echo("piv3 <- dplyr::left_join(piv1, piv2, by = c(" + by_vars.join(", ") + "))\\n");
+    echo("piv1 <- est %>% dplyr::select(dplyr::all_of(c(" + id_vars.join(",") + ", " + estimate_array.join(",") + "))) %>% tidyr::pivot_longer(cols=dplyr::all_of(c(" + estimate_array.join(",") + ")), names_to = \\"respuesta\\", values_to = \\"recuento\\")\\n");
+    echo("piv2 <- est %>% dplyr::select(dplyr::all_of(c(" + id_vars.join(",") + ", " + se_array.join(",") + "))) %>% tidyr::pivot_longer(cols=dplyr::all_of(c(" + se_array.join(",") + ")), names_to = \\"variable\\", values_to = \\"se\\")\\n");
+
+    // Robust join matching
+    if (estimate_array.length == 1 && se_array.length == 1) {
+       echo("piv2 <- dplyr::mutate(piv2, respuesta = " + estimate_array[0] + ")\\n");
+    } else {
+       echo("piv2 <- dplyr::mutate(piv2, respuesta = stringr::str_remove(variable, \\"^se\\\\\\\\.\\"))\\n");
+    }
+
+    echo("piv3 <- dplyr::left_join(piv1, piv2, by = c(" + id_vars.join(", ") + ", \\"respuesta\\"))\\n");
 
     if(prefix_clean){
       echo("piv3[[\\"respuesta\\"]] <- gsub(\\"" + prefix_clean + "\\", \\"\\", piv3[[\\"respuesta\\"]] )\\n");
@@ -189,7 +194,7 @@ local({
       var facet_opts = "";
       if (facet_layout == "row") { facet_opts = ", nrow = 1"; }
       else if (facet_layout == "col") { facet_opts = ", ncol = 1"; }
-      echo("p <- p + ggplot2::facet_wrap(~ " + facet_clean + facet_opts + ")\\n");
+      echo("p <- p + ggplot2::facet_wrap(~ " + getColumnName(facet_var_full) + facet_opts + ")\\n");
     }
   ')
 
@@ -411,7 +416,7 @@ local({
   hist_component <- rk.plugin.component("Histogram", xml=list(dialog=hist_dialog), js=list(require=c("ggsurvey","ggplot2"), calculate=js_calc_hist, printout=js_print_graph), hierarchy = list("Survey","Graphs","ggGraphs"))
 
   # =========================================================================================
-  # Component 6: Means Graph (NEW)
+  # Component 6: Means Graph (Updated with Robust Join)
   # =========================================================================================
   means_svyby_selector <- rk.XML.varselector(id.name = "means_svyby_selector", label = "svyby objects")
   means_svyby_slot <- rk.XML.varslot(label = "svyby object to plot", source = "means_svyby_selector", required = TRUE, id.name = "svyby_object", classes="data.frame")
@@ -458,20 +463,28 @@ local({
     var estimate_array = estimate_vars_full.split(/\\n/).filter(function(n){ return n != "" }).map(function(item) { return "\\"" + getColumnName(item) + "\\""; });
     var se_array = se_vars_full.split(/\\n/).filter(function(n){ return n != "" }).map(function(item) { return "\\"" + getColumnName(item) + "\\""; });
 
-    var by_vars = new Array();
-    by_vars.push("\\"" + xaxis_clean + "\\"");
-    by_vars.push("\\"respuesta\\"");
-    var facet_clean = "";
+    var id_vars = new Array();
+    id_vars.push("\\"" + xaxis_clean + "\\"");
     if(facet_var_full){
-      facet_clean = getColumnName(facet_var_full);
-      by_vars.push("\\"" + facet_clean + "\\"");
+      id_vars.push("\\"" + getColumnName(facet_var_full) + "\\"");
     }
 
     echo("est <- " + svyby_obj + "\\n");
-    echo("piv1 <- tidyr::pivot_longer(est, cols=dplyr::all_of(c(" + estimate_array.join(",") + ")), names_to = \\"respuesta\\", values_to = \\"recuento\\")\\n");
-    echo("piv2 <- tidyr::pivot_longer(est, cols=dplyr::all_of(c(" + se_array.join(",") + ")), names_to = \\"variable\\", values_to = \\"se\\")\\n");
-    echo("piv2 <- dplyr::mutate(piv2, respuesta = stringr::str_remove(variable, \\"^se\\\\\\\\.\\"))\\n");
-    echo("piv3 <- dplyr::left_join(piv1, piv2, by = c(" + by_vars.join(", ") + "))\\n");
+
+    // Robust Pivot Strategy: Explicitly select ID + Target columns to avoid name collisions in join
+    echo("piv1 <- est %>% dplyr::select(dplyr::all_of(c(" + id_vars.join(",") + ", " + estimate_array.join(",") + "))) %>% tidyr::pivot_longer(cols=dplyr::all_of(c(" + estimate_array.join(",") + ")), names_to = \\"respuesta\\", values_to = \\"recuento\\")\\n");
+    echo("piv2 <- est %>% dplyr::select(dplyr::all_of(c(" + id_vars.join(",") + ", " + se_array.join(",") + "))) %>% tidyr::pivot_longer(cols=dplyr::all_of(c(" + se_array.join(",") + ")), names_to = \\"variable\\", values_to = \\"se\\")\\n");
+
+    // Robust Join Key Matching
+    if (estimate_array.length == 1 && se_array.length == 1) {
+       // Single variable: Force the name match
+       echo("piv2 <- dplyr::mutate(piv2, respuesta = " + estimate_array[0] + ")\\n");
+    } else {
+       // Multi variable: Rely on naming convention
+       echo("piv2 <- dplyr::mutate(piv2, respuesta = stringr::str_remove(variable, \\"^se\\\\\\\\.\\"))\\n");
+    }
+
+    echo("piv3 <- dplyr::left_join(piv1, piv2, by = c(" + id_vars.join(", ") + ", \\"respuesta\\"))\\n");
 
     if(prefix_clean){
       echo("piv3[[\\"respuesta\\"]] <- gsub(\\"" + prefix_clean + "\\", \\"\\", piv3[[\\"respuesta\\"]] )\\n");
@@ -501,7 +514,7 @@ local({
       var facet_opts = "";
       if (facet_layout == "row") { facet_opts = ", nrow = 1"; }
       else if (facet_layout == "col") { facet_opts = ", ncol = 1"; }
-      echo("p <- p + ggplot2::facet_wrap(~ " + facet_clean + facet_opts + ")\\n");
+      echo("p <- p + ggplot2::facet_wrap(~ " + getColumnName(facet_var_full) + facet_opts + ")\\n");
     }
   ')
   means_component <- rk.plugin.component("Means Graph", xml=list(dialog=means_dialog), js=list(require=c("ggplot2", "tidyr", "dplyr", "forcats", "stringr", "RColorBrewer"), calculate=js_calc_means, printout=js_print_graph), hierarchy = list("Survey","Graphs","ggGraphs"))
