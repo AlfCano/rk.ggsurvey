@@ -19,11 +19,27 @@
 		</setting>
 		<setting id="xaxis_var">
 		</setting>
+		<setting id="group_var">
+		</setting>
+		<setting id="group_aes_mode">
+		</setting>
 		<setting id="facet_var">
 		</setting>
 		<setting id="estimate_vars">
 		</setting>
 		<setting id="se_vars">
+		</setting>
+		<caption id="tab_Options" />
+		<setting id="conf_level">
+		</setting>
+		<caption id="frm_XxsOrdrn" />
+		<setting id="order_x_est">
+		</setting>
+		<setting id="invert_order">
+		</setting>
+		<setting id="palette_input">
+		</setting>
+		<setting id="facet_layout">
 		</setting>
 		<caption id="tab_Labels" />
 		<setting id="plot_title">
@@ -46,12 +62,27 @@
 		</setting>
 		<setting id="plot_caption">
 		</setting>
-		<caption id="tab_StyleLyt" />
-		<setting id="conf_level">
+		<caption id="tab_Theme" />
+		<setting id="theme_text_rel">
 		</setting>
-		<setting id="palette_input">
+		<setting id="theme_title_rel">
 		</setting>
-		<setting id="facet_layout">
+		<setting id="theme_legend_rel">
+		</setting>
+		<setting id="theme_legend_pos">
+		</setting>
+		<caption id="frm_XAxisTxt" />
+		<setting id="theme_x_angle">
+		</setting>
+		<setting id="theme_x_hjust">
+		</setting>
+		<setting id="theme_x_vjust">
+		</setting>
+		<caption id="frm_XAxsVlLb" />
+		<setting id="theme_x_val_wrap">
+		</setting>
+		<caption id="frm_YAxsVlLb" />
+		<setting id="theme_y_val_wrap">
 		</setting>
 		<caption id="tab_OutptDvc" />
 		<setting id="device_type">

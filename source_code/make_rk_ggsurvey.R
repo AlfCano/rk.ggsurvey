@@ -15,7 +15,7 @@ local({
     ),
     about = list(
       desc = "A plugin package to analyze complex survey designs with custom plugins and the 'ggsurvey' package.",
-      version = "0.1.6",
+      version = "0.1.7",
       url = "https://github.com/AlfCano/rk.ggsurvey",
       license = "GPL (>= 3)"
     )
@@ -95,6 +95,14 @@ local({
     "Purples" = list(val = "Purples"), "RdYlBu" = list(val = "RdYlBu"), "Spectral" = list(val = "Spectral")
   ))
 
+  ordering_frame <- rk.XML.frame(
+    label = "X-axis Ordering",
+    child = rk.XML.col(
+        rk.XML.cbox(label = "Order X-axis by estimate value", id.name = "order_x_est", value = "1"),
+        rk.XML.cbox(label = "Invert final order", id.name = "invert_order", value = "1")
+    )
+  )
+
   js_print_graph <- '
     if(!is_preview){
       var graph_options = [];
@@ -116,24 +124,15 @@ local({
   '
 
   # =========================================================================================
-  # 3. Component Definitions
+  # 3. MAIN PLUGIN DEFINITION: MEANS GRAPH
   # =========================================================================================
 
-  # --- A. MEANS GRAPH (FIXED: Removing redundant cols in piv2 to prevent join renaming) ---
   means_svyby_selector <- rk.XML.varselector(id.name = "means_svyby_selector", label = "svyby objects")
   means_svyby_slot <- rk.XML.varslot(label = "svyby object to plot", source = "means_svyby_selector", required = TRUE, id.name = "svyby_object", classes="data.frame")
   means_xaxis_slot <- rk.XML.varslot(label = "X-axis variable (e.g., year)", source = "means_svyby_selector", required = TRUE, id.name = "xaxis_var")
   means_facet_slot <- rk.XML.varslot(label = "Faceting variable (optional)", source = "means_svyby_selector", id.name = "facet_var")
   means_est_slot <- rk.XML.varslot(label = "Estimate columns", source = "means_svyby_selector", multi=TRUE, required = TRUE, id.name = "estimate_vars")
   means_se_slot <- rk.XML.varslot(label = "Standard Error columns", source = "means_svyby_selector", multi=TRUE, required = TRUE, id.name = "se_vars")
-
-  ordering_frame <- rk.XML.frame(
-    label = "X-axis Ordering",
-    child = rk.XML.col(
-        rk.XML.cbox(label = "Order X-axis by estimate value", id.name = "order_x_est", value = "1"),
-        rk.XML.cbox(label = "Invert final order", id.name = "invert_order", value = "1")
-    )
-  )
 
   means_dialog <- rk.XML.dialog(
     label = "Means Graph from svyby Object",
@@ -182,11 +181,9 @@ local({
 
     echo("est <- " + svyby_obj + " %>% dplyr::mutate(rk_internal_id = dplyr::row_number())\\n");
 
-    // PIV1: Keeps Context (X-axis, etc) + ID + Estimate
     var selection_vars_piv1 = id_vars.join(",") + ", \\"rk_internal_id\\"";
     echo("piv1 <- est %>% dplyr::select(dplyr::all_of(c(" + selection_vars_piv1 + ", " + estimate_array.join(",") + "))) %>% tidyr::pivot_longer(cols=dplyr::all_of(c(" + estimate_array.join(",") + ")), names_to = \\"respuesta\\", values_to = \\"recuento\\")\\n");
 
-    // PIV2: ONLY ID + SE (Crucial Fix: Exclude X-axis variable here to avoid ent.x / ent.y renaming in join)
     var selection_vars_piv2 = "\\"rk_internal_id\\"";
     echo("piv2 <- est %>% dplyr::select(dplyr::all_of(c(" + selection_vars_piv2 + ", " + se_array.join(",") + "))) %>% tidyr::pivot_longer(cols=dplyr::all_of(c(" + se_array.join(",") + ")), names_to = \\"variable\\", values_to = \\"se\\")\\n");
 
@@ -199,7 +196,6 @@ local({
     echo("piv3 <- dplyr::left_join(piv1, piv2, by = c(\\"rk_internal_id\\", \\"respuesta\\"))\\n");
     echo("piv3[[\\"respuesta\\"]] <- forcats::fct_rev(piv3[[\\"respuesta\\"]] )\\n");
 
-    // 2. ORDERING LOGIC
     if (getValue("order_x_est") == "1") {
        echo("piv3[[\\"" + xaxis_clean + "\\"]] <- forcats::fct_reorder(as.factor(piv3[[\\"" + xaxis_clean + "\\"]]), piv3$recuento)\\n");
     } else {
@@ -210,13 +206,11 @@ local({
        echo("piv3[[\\"" + xaxis_clean + "\\"]] <- forcats::fct_rev(piv3[[\\"" + xaxis_clean + "\\"]])\\n");
     }
 
-    // 3. BASE PLOT
     echo("p <- ggplot2::ggplot(piv3, ggplot2::aes(x = " + xaxis_clean + ", y = recuento, color = " + xaxis_clean + ")) +\\n");
     echo("  ggplot2::geom_point(size=2) +\\n");
     echo("  ggplot2::geom_errorbar(ggplot2::aes(ymin = recuento - ci_multiplier*se, ymax = recuento + ci_multiplier*se), width = 0.2) +\\n");
     echo("  ggplot2::theme_bw()\\n");
 
-    // 4. PALETTE & LEGEND
     var palette = getValue("palette_input");
     var legend_wrap_width = getValue("legend_wrap_width");
     var label_wrap_call = "";
@@ -246,7 +240,6 @@ local({
       echo("p <- p + ggplot2::facet_wrap(~ " + getColumnName(facet_var_full) + facet_opts + ")\\n");
     }
 
-    // 5. LABELS
     var labs_list = [];
     var custom_xlab = getValue("plot_xlab");
     var xlab_wrap = getValue("plot_xlab_wrap");
@@ -286,7 +279,6 @@ local({
       echo("p <- p + ggplot2::labs(" + labs_list.join(", ") + ")\\n");
     }
 
-    // 6. THEME
     var x_val_wrap = getValue("theme_x_val_wrap");
     if (x_val_wrap && parseInt(x_val_wrap) > 0) {
         echo("p <- p + ggplot2::scale_x_discrete(labels = scales::label_wrap(" + x_val_wrap + "))\\n");
@@ -300,26 +292,35 @@ local({
     if(getValue("theme_text_rel") != 1) { theme_list.push("text = ggplot2::element_text(size = ggplot2::rel(" + getValue("theme_text_rel") + "))"); }
     if(getValue("theme_title_rel") != 1.2) { theme_list.push("plot.title = ggplot2::element_text(size = ggplot2::rel(" + getValue("theme_title_rel") + "))"); }
     if(getValue("theme_legend_rel") != 0.8) { theme_list.push("legend.text = ggplot2::element_text(size = ggplot2::rel(" + getValue("theme_legend_rel") + "))"); }
-
     if(getValue("theme_legend_pos") != "right") { theme_list.push("legend.position = \\"" + getValue("theme_legend_pos") + "\\""); }
-
     var x_angle = getValue("theme_x_angle");
     var x_hjust = getValue("theme_x_hjust");
     var x_vjust = getValue("theme_x_vjust");
     if(x_angle != 0 || x_hjust != 0.5 || x_vjust != 0.5) {
         theme_list.push("axis.text.x = ggplot2::element_text(angle=" + x_angle + ", hjust=" + x_hjust + ", vjust=" + x_vjust + ")");
     }
-
     if(theme_list.length > 0) {
       echo("p <- p + ggplot2::theme(" + theme_list.join(", ") + ")\\n");
     }
   ')
-  means_component <- rk.plugin.component("Means Graph", xml=list(dialog=means_dialog), js=list(require=c("ggplot2", "tidyr", "dplyr", "forcats", "stringr", "RColorBrewer", "scales"), calculate=js_calc_means, printout=js_print_graph), hierarchy = list("Survey","Graphs","ggGraphs"))
 
-  # --- B. LINE GRAPH ---
+  # =========================================================================================
+  # 4. COMPONENTS
+  # =========================================================================================
+
+  # --- LINE GRAPH COMPONENT ---
   line_svyby_selector <- rk.XML.varselector(id.name = "line_svyby_selector", label = "svyby objects")
   line_svyby_slot <- rk.XML.varslot(label = "svyby object to plot", source = "line_svyby_selector", required = TRUE, id.name = "svyby_object", classes="data.frame")
   line_xaxis_slot <- rk.XML.varslot(label = "X-axis variable (e.g., year)", source = "line_svyby_selector", required = TRUE, id.name = "xaxis_var")
+  line_group_slot <- rk.XML.varslot(label = "Grouping variable (optional, for multiple lines)", source = "line_svyby_selector", id.name = "group_var")
+
+  # MODIFIED: Reordered options as requested
+  line_group_aes <- rk.XML.dropdown(label="Map Grouping to:", id.name="group_aes_mode", options=list(
+        "Color only"=list(val="color", chk=TRUE),
+        "Shape only"=list(val="shape"),
+        "Color & Shape"=list(val="both")
+  ))
+
   line_facet_slot <- rk.XML.varslot(label = "Faceting variable (optional)", source = "line_svyby_selector", id.name = "facet_var")
   line_est_slot <- rk.XML.varslot(label = "Estimate columns", source = "line_svyby_selector", multi=TRUE, required = TRUE, id.name = "estimate_vars")
   line_se_slot <- rk.XML.varslot(label = "Standard Error columns", source = "line_svyby_selector", multi=TRUE, required = TRUE, id.name = "se_vars")
@@ -330,53 +331,132 @@ local({
       rk.XML.col(line_svyby_selector),
       rk.XML.col(
         rk.XML.tabbook(tabs=list(
-          "Data" = rk.XML.col(line_svyby_slot, line_xaxis_slot, line_facet_slot, line_est_slot, line_se_slot),
-          "Labels" = labels_tab,
-          "Style & Layout" = rk.XML.col(
+          "Data" = rk.XML.col(line_svyby_slot, line_xaxis_slot, line_group_slot, line_group_aes, line_facet_slot, line_est_slot, line_se_slot),
+          "Options" = rk.XML.col(
             rk.XML.spinbox(label="Confidence level for error bars (%)", id.name="conf_level", min=1, max=99, initial=95),
+            ordering_frame,
             color_palette_dropdown,
             rk.XML.dropdown(label="Facet Layout", id.name="facet_layout", options=list(
               "Wrap (default)"=list(val="wrap",chk=TRUE), "Force to one row"=list(val="row"), "Force to one column"=list(val="col")
             ))
           ),
+          "Labels" = labels_tab,
+          "Theme" = theme_tab,
           "Output Device" = device_tab
         )),
         rk.XML.preview(id.name="plot_preview")
       )
     )
   )
+
   js_calc_line <- paste(js_helpers, '
     var svyby_obj = getValue("svyby_object");
     if(!svyby_obj) return;
     var xaxis_clean = getColumnName(getValue("xaxis_var"));
+    var group_var_full = getValue("group_var");
+    var group_aes_mode = getValue("group_aes_mode");
+    var facet_var_full = getValue("facet_var");
     var estimate_vars_full = getValue("estimate_vars");
     var se_vars_full = getValue("se_vars");
-    var facet_var_full = getValue("facet_var");
     var conf_level = getValue("conf_level") / 100;
 
     echo("ci_multiplier <- qnorm(1 - (1 - " + conf_level + ") / 2)\\n");
     var estimate_array = estimate_vars_full.split(/\\n/).filter(function(n){ return n != "" }).map(function(item) { return "\\"" + getColumnName(item) + "\\""; });
     var se_array = se_vars_full.split(/\\n/).filter(function(n){ return n != "" }).map(function(item) { return "\\"" + getColumnName(item) + "\\""; });
+
     var id_vars = new Array();
     id_vars.push("\\"" + xaxis_clean + "\\"");
+    if(group_var_full){ id_vars.push("\\"" + getColumnName(group_var_full) + "\\""); }
     if(facet_var_full){ id_vars.push("\\"" + getColumnName(facet_var_full) + "\\""); }
 
-    echo("est <- " + svyby_obj + "\\n");
-    echo("piv1 <- est %>% dplyr::select(dplyr::all_of(c(" + id_vars.join(",") + ", " + estimate_array.join(",") + "))) %>% tidyr::pivot_longer(cols=dplyr::all_of(c(" + estimate_array.join(",") + ")), names_to = \\"respuesta\\", values_to = \\"recuento\\")\\n");
-    echo("piv2 <- est %>% dplyr::select(dplyr::all_of(c(" + id_vars.join(",") + ", " + se_array.join(",") + "))) %>% tidyr::pivot_longer(cols=dplyr::all_of(c(" + se_array.join(",") + ")), names_to = \\"variable\\", values_to = \\"se\\")\\n");
+    echo("est <- " + svyby_obj + " %>% dplyr::mutate(rk_internal_id = dplyr::row_number())\\n");
+
+    var selection_vars_piv1 = id_vars.join(",") + ", \\"rk_internal_id\\"";
+    echo("piv1 <- est %>% dplyr::select(dplyr::all_of(c(" + selection_vars_piv1 + ", " + estimate_array.join(",") + "))) %>% tidyr::pivot_longer(cols=dplyr::all_of(c(" + estimate_array.join(",") + ")), names_to = \\"respuesta\\", values_to = \\"recuento\\")\\n");
+
+    var selection_vars_piv2 = "\\"rk_internal_id\\"";
+    echo("piv2 <- est %>% dplyr::select(dplyr::all_of(c(" + selection_vars_piv2 + ", " + se_array.join(",") + "))) %>% tidyr::pivot_longer(cols=dplyr::all_of(c(" + se_array.join(",") + ")), names_to = \\"variable\\", values_to = \\"se\\")\\n");
 
     if (estimate_array.length == 1 && se_array.length == 1) {
        echo("piv2 <- dplyr::mutate(piv2, respuesta = " + estimate_array[0] + ")\\n");
     } else {
        echo("piv2 <- dplyr::mutate(piv2, respuesta = stringr::str_remove(variable, \\"^se\\\\\\\\.\\"))\\n");
     }
-    echo("piv3 <- dplyr::left_join(piv1, piv2, by = c(" + id_vars.join(", ") + ", \\"respuesta\\"))\\n");
+    echo("piv3 <- dplyr::left_join(piv1, piv2, by = c(\\"rk_internal_id\\", \\"respuesta\\"))\\n");
     echo("piv3[[\\"respuesta\\"]] <- forcats::fct_rev(piv3[[\\"respuesta\\"]] )\\n");
 
-    echo("p <- ggplot2::ggplot(piv3, ggplot2::aes(x = " + xaxis_clean + ", y = recuento, color = respuesta, group = respuesta)) +\\n  ggplot2::geom_line() +\\n");
+    if (getValue("order_x_est") == "1") {
+       echo("piv3[[\\"" + xaxis_clean + "\\"]] <- forcats::fct_reorder(as.factor(piv3[[\\"" + xaxis_clean + "\\"]]), piv3$recuento)\\n");
+    } else {
+       echo("piv3[[\\"" + xaxis_clean + "\\"]] <- as.factor(piv3[[\\"" + xaxis_clean + "\\"]])\\n");
+    }
+    if (getValue("invert_order") == "1") {
+       echo("piv3[[\\"" + xaxis_clean + "\\"]] <- forcats::fct_rev(piv3[[\\"" + xaxis_clean + "\\"]])\\n");
+    }
+
+    // --- PLOT CONSTRUCTION ---
+    var aes_call = "x = " + xaxis_clean + ", y = recuento";
+    var color_var = "respuesta";
+
+    if (group_var_full) {
+        var group_clean = getColumnName(group_var_full);
+
+        if (group_aes_mode == "both") {
+            color_var = group_clean;
+            aes_call += ", color = " + group_clean + ", shape = " + group_clean;
+            if (estimate_array.length > 1) {
+                aes_call += ", linetype = respuesta, group = interaction(" + group_clean + ", respuesta)";
+            } else {
+                aes_call += ", group = " + group_clean;
+            }
+        }
+        else if (group_aes_mode == "color") {
+            color_var = group_clean;
+            aes_call += ", color = " + group_clean;
+            if (estimate_array.length > 1) {
+                aes_call += ", linetype = respuesta, group = interaction(" + group_clean + ", respuesta)";
+            } else {
+                aes_call += ", group = " + group_clean;
+            }
+        }
+        else if (group_aes_mode == "shape") {
+            color_var = "respuesta";
+            aes_call += ", shape = " + group_clean + ", color = respuesta";
+            if (estimate_array.length > 1) {
+                aes_call += ", group = interaction(" + group_clean + ", respuesta)";
+            } else {
+                aes_call += ", group = " + group_clean;
+            }
+        }
+    } else {
+        aes_call += ", color = respuesta, group = respuesta";
+    }
+
+    echo("p <- ggplot2::ggplot(piv3, ggplot2::aes(" + aes_call + ")) +\\n");
+    echo("  ggplot2::geom_line(linewidth=1) +\\n");
+    echo("  ggplot2::geom_point(size=2) +\\n");
     echo("  ggplot2::geom_errorbar(ggplot2::aes(ymin = recuento - ci_multiplier*se, ymax = recuento + ci_multiplier*se), width = 0.2) +\\n");
-    echo("  ggplot2::scale_color_brewer(palette = \\"" + getValue("palette_input") + "\\") +\\n");
     echo("  ggplot2::theme_bw()\\n");
+
+    // PALETTE
+    var palette = getValue("palette_input");
+    var legend_wrap_width = getValue("legend_wrap_width");
+    var label_wrap_call = "";
+    if (legend_wrap_width && parseInt(legend_wrap_width) > 0) {
+        label_wrap_call = "labels = scales::label_wrap(" + legend_wrap_width + ")";
+    }
+
+    echo("n_colors <- length(unique(piv3[[\\"" + color_var + "\\"]]))\\n");
+    echo("if (n_colors > 9) {\\n");
+    echo("   get_palette <- colorRampPalette(RColorBrewer::brewer.pal(9, \\"" + palette + "\\"))\\n");
+    var manual_opts = "values = get_palette(n_colors)";
+    if(label_wrap_call) manual_opts += ", " + label_wrap_call;
+    echo("   p <- p + ggplot2::scale_color_manual(" + manual_opts + ")\\n");
+    echo("} else {\\n");
+    var brewer_opts = "palette = \\"" + palette + "\\"";
+    if(label_wrap_call) brewer_opts += ", " + label_wrap_call;
+    echo("   p <- p + ggplot2::scale_color_brewer(" + brewer_opts + ")\\n");
+    echo("}\\n");
 
     if(facet_var_full){
       var facet_layout = getValue("facet_layout");
@@ -385,9 +465,75 @@ local({
       else if (facet_layout == "col") { facet_opts = ", ncol = 1"; }
       echo("p <- p + ggplot2::facet_wrap(~ " + getColumnName(facet_var_full) + facet_opts + ")\\n");
     }
-    if (getValue("plot_title")) { echo("p <- p + ggplot2::labs(title = \\"" + getValue("plot_title") + "\\")\\n"); }
+
+    // LABELS
+    var labs_list = [];
+    var custom_xlab = getValue("plot_xlab");
+    if (custom_xlab) { labs_list.push("x = \\"" + custom_xlab + "\\""); }
+    else { labs_list.push("x = rk.get.label(" + getValue("xaxis_var") + ")"); }
+
+    var custom_ylab = getValue("plot_ylab");
+    if (custom_ylab) { labs_list.push("y = \\"" + custom_ylab + "\\""); }
+
+    var custom_legend_title = getValue("plot_legend_title");
+    var legend_title = custom_legend_title ? custom_legend_title : "Respuesta";
+
+    if (group_var_full) {
+        var g_title = custom_legend_title ? custom_legend_title : "Group";
+        var r_title = "Respuesta";
+
+        if (group_aes_mode == "both") {
+            labs_list.push("color = \\"" + g_title + "\\"");
+            labs_list.push("shape = \\"" + g_title + "\\"");
+            labs_list.push("linetype = \\"" + r_title + "\\"");
+        }
+        else if (group_aes_mode == "color") {
+            labs_list.push("color = \\"" + g_title + "\\"");
+            labs_list.push("linetype = \\"" + r_title + "\\"");
+        }
+        else if (group_aes_mode == "shape") {
+            labs_list.push("shape = \\"" + g_title + "\\"");
+            if(custom_legend_title) labs_list.push("color = \\"" + custom_legend_title + "\\"");
+            else labs_list.push("color = \\"" + r_title + "\\"");
+        }
+    } else {
+        labs_list.push("color = \\"" + legend_title + "\\"");
+    }
+
+    if (getValue("plot_title")) { labs_list.push("title = \\"" + getValue("plot_title") + "\\""); }
+    if (getValue("plot_subtitle")) { labs_list.push("subtitle = \\"" + getValue("plot_subtitle") + "\\""); }
+    if (getValue("plot_caption")) { labs_list.push("caption = \\"" + getValue("plot_caption") + "\\""); }
+
+    if (labs_list.length > 0) {
+      echo("p <- p + ggplot2::labs(" + labs_list.join(", ") + ")\\n");
+    }
+
+    // THEME
+    var x_val_wrap = getValue("theme_x_val_wrap");
+    if (x_val_wrap && parseInt(x_val_wrap) > 0) {
+        echo("p <- p + ggplot2::scale_x_discrete(labels = scales::label_wrap(" + x_val_wrap + "))\\n");
+    }
+    var y_val_wrap = getValue("theme_y_val_wrap");
+    if (y_val_wrap && parseInt(y_val_wrap) > 0) {
+        echo("p <- p + ggplot2::scale_y_continuous(labels = scales::label_wrap(" + y_val_wrap + "))\\n");
+    }
+
+    var theme_list = [];
+    if(getValue("theme_text_rel") != 1) { theme_list.push("text = ggplot2::element_text(size = ggplot2::rel(" + getValue("theme_text_rel") + "))"); }
+    if(getValue("theme_title_rel") != 1.2) { theme_list.push("plot.title = ggplot2::element_text(size = ggplot2::rel(" + getValue("theme_title_rel") + "))"); }
+    if(getValue("theme_legend_rel") != 0.8) { theme_list.push("legend.text = ggplot2::element_text(size = ggplot2::rel(" + getValue("theme_legend_rel") + "))"); }
+    if(getValue("theme_legend_pos") != "right") { theme_list.push("legend.position = \\"" + getValue("theme_legend_pos") + "\\""); }
+    var x_angle = getValue("theme_x_angle");
+    var x_hjust = getValue("theme_x_hjust");
+    var x_vjust = getValue("theme_x_vjust");
+    if(x_angle != 0 || x_hjust != 0.5 || x_vjust != 0.5) {
+        theme_list.push("axis.text.x = ggplot2::element_text(angle=" + x_angle + ", hjust=" + x_hjust + ", vjust=" + x_vjust + ")");
+    }
+    if(theme_list.length > 0) {
+      echo("p <- p + ggplot2::theme(" + theme_list.join(", ") + ")\\n");
+    }
   ')
-  line_component <- rk.plugin.component("Line Graph", xml=list(dialog=line_graph_dialog), js=list(require=c("ggplot2","dplyr","tidyr","RColorBrewer"), calculate=js_calc_line, printout=js_print_graph), hierarchy = list("Survey","Graphs","ggGraphs"))
+  line_component <- rk.plugin.component("Line Graph", xml=list(dialog=line_graph_dialog), js=list(require=c("ggplot2","dplyr","tidyr","RColorBrewer","scales","stringr"), calculate=js_calc_line, printout=js_print_graph), hierarchy = list("Survey","Graphs","ggGraphs"))
 
   # --- C. OTHER GRAPHS ---
   bar_svy_selector <- rk.XML.varselector(id.name="bar_svy_selector", label="Survey Design Objects"); attr(bar_svy_selector, "classes") <- "svydesign"
@@ -416,11 +562,10 @@ local({
   hist_component <- rk.plugin.component("Histogram", xml=list(dialog=bar_dialog), js=list(require=c("ggsurvey","ggplot2"), calculate=js_calc_bar, printout=js_print_graph), hierarchy = list("Survey","Graphs","ggGraphs"))
 
   # =========================================================================================
-  # 4. Final Skeleton Generation
+  # 5. Final Skeleton Generation
   # =========================================================================================
   all_components <- list(
     line_component,
-    means_component,
     bar_component,
     box_component,
     hex_component,
@@ -430,7 +575,7 @@ local({
   rk.plugin.skeleton(
     about = package_about,
     path = ".",
-    xml = list(dialog = means_dialog), # Fallback main dialog (required but unused if components override)
+    xml = list(dialog = means_dialog),
     js = list(
       require = c("survey", "dplyr", "ggplot2", "tidyr", "forcats", "stringr", "RColorBrewer", "scales"),
       calculate = js_calc_means,
@@ -438,14 +583,14 @@ local({
     ),
     rkh = list(help = rk.rkh.doc(title=rk.rkh.title("Means Graph"))),
     components = all_components,
-    pluginmap = list(name = "ggGraphs", hierarchy = list("Survey","Graphs","ggGraphs")),
+    pluginmap = list(name = "Means Graph", hierarchy = list("Survey","Graphs","ggGraphs")),
     create = c("pmap", "xml", "js", "desc", "rkh"),
     load = TRUE,
     overwrite = TRUE,
     show = FALSE
   )
 
-  cat("\nFully optimized plugin package 'rk.ggsurvey' (v0.1.14) generated.\n")
+  cat("\nFully optimized plugin package 'rk.ggsurvey' (v0.1.7) generated.\n")
   cat("  rk.updatePluginMessages(plugin.dir=\"rk.ggsurvey\")\n")
   cat("  devtools::install(\"rk.ggsurvey\")\n")
 })

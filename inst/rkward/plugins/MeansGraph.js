@@ -10,6 +10,14 @@ function preview(){
 function preprocess(is_preview){
 	// add requirements etc. here
 	if(is_preview) {
+		echo("if(!base::require(survey)){stop(" + i18n("Preview not available, because package survey is not installed or cannot be loaded.") + ")}\n");
+	} else {
+		echo("require(survey)\n");
+	}	if(is_preview) {
+		echo("if(!base::require(dplyr)){stop(" + i18n("Preview not available, because package dplyr is not installed or cannot be loaded.") + ")}\n");
+	} else {
+		echo("require(dplyr)\n");
+	}	if(is_preview) {
 		echo("if(!base::require(ggplot2)){stop(" + i18n("Preview not available, because package ggplot2 is not installed or cannot be loaded.") + ")}\n");
 	} else {
 		echo("require(ggplot2)\n");
@@ -17,10 +25,6 @@ function preprocess(is_preview){
 		echo("if(!base::require(tidyr)){stop(" + i18n("Preview not available, because package tidyr is not installed or cannot be loaded.") + ")}\n");
 	} else {
 		echo("require(tidyr)\n");
-	}	if(is_preview) {
-		echo("if(!base::require(dplyr)){stop(" + i18n("Preview not available, because package dplyr is not installed or cannot be loaded.") + ")}\n");
-	} else {
-		echo("require(dplyr)\n");
 	}	if(is_preview) {
 		echo("if(!base::require(forcats)){stop(" + i18n("Preview not available, because package forcats is not installed or cannot be loaded.") + ")}\n");
 	} else {
@@ -84,11 +88,9 @@ function calculate(is_preview){
 
     echo("est <- " + svyby_obj + " %>% dplyr::mutate(rk_internal_id = dplyr::row_number())\n");
 
-    // PIV1: Keeps Context (X-axis, etc) + ID + Estimate
     var selection_vars_piv1 = id_vars.join(",") + ", \"rk_internal_id\"";
     echo("piv1 <- est %>% dplyr::select(dplyr::all_of(c(" + selection_vars_piv1 + ", " + estimate_array.join(",") + "))) %>% tidyr::pivot_longer(cols=dplyr::all_of(c(" + estimate_array.join(",") + ")), names_to = \"respuesta\", values_to = \"recuento\")\n");
 
-    // PIV2: ONLY ID + SE (Crucial Fix: Exclude X-axis variable here to avoid ent.x / ent.y renaming in join)
     var selection_vars_piv2 = "\"rk_internal_id\"";
     echo("piv2 <- est %>% dplyr::select(dplyr::all_of(c(" + selection_vars_piv2 + ", " + se_array.join(",") + "))) %>% tidyr::pivot_longer(cols=dplyr::all_of(c(" + se_array.join(",") + ")), names_to = \"variable\", values_to = \"se\")\n");
 
@@ -101,7 +103,6 @@ function calculate(is_preview){
     echo("piv3 <- dplyr::left_join(piv1, piv2, by = c(\"rk_internal_id\", \"respuesta\"))\n");
     echo("piv3[[\"respuesta\"]] <- forcats::fct_rev(piv3[[\"respuesta\"]] )\n");
 
-    // 2. ORDERING LOGIC
     if (getValue("order_x_est") == "1") {
        echo("piv3[[\"" + xaxis_clean + "\"]] <- forcats::fct_reorder(as.factor(piv3[[\"" + xaxis_clean + "\"]]), piv3$recuento)\n");
     } else {
@@ -112,13 +113,11 @@ function calculate(is_preview){
        echo("piv3[[\"" + xaxis_clean + "\"]] <- forcats::fct_rev(piv3[[\"" + xaxis_clean + "\"]])\n");
     }
 
-    // 3. BASE PLOT
     echo("p <- ggplot2::ggplot(piv3, ggplot2::aes(x = " + xaxis_clean + ", y = recuento, color = " + xaxis_clean + ")) +\n");
     echo("  ggplot2::geom_point(size=2) +\n");
     echo("  ggplot2::geom_errorbar(ggplot2::aes(ymin = recuento - ci_multiplier*se, ymax = recuento + ci_multiplier*se), width = 0.2) +\n");
     echo("  ggplot2::theme_bw()\n");
 
-    // 4. PALETTE & LEGEND
     var palette = getValue("palette_input");
     var legend_wrap_width = getValue("legend_wrap_width");
     var label_wrap_call = "";
@@ -148,7 +147,6 @@ function calculate(is_preview){
       echo("p <- p + ggplot2::facet_wrap(~ " + getColumnName(facet_var_full) + facet_opts + ")\n");
     }
 
-    // 5. LABELS
     var labs_list = [];
     var custom_xlab = getValue("plot_xlab");
     var xlab_wrap = getValue("plot_xlab_wrap");
@@ -188,7 +186,6 @@ function calculate(is_preview){
       echo("p <- p + ggplot2::labs(" + labs_list.join(", ") + ")\n");
     }
 
-    // 6. THEME
     var x_val_wrap = getValue("theme_x_val_wrap");
     if (x_val_wrap && parseInt(x_val_wrap) > 0) {
         echo("p <- p + ggplot2::scale_x_discrete(labels = scales::label_wrap(" + x_val_wrap + "))\n");
@@ -202,16 +199,13 @@ function calculate(is_preview){
     if(getValue("theme_text_rel") != 1) { theme_list.push("text = ggplot2::element_text(size = ggplot2::rel(" + getValue("theme_text_rel") + "))"); }
     if(getValue("theme_title_rel") != 1.2) { theme_list.push("plot.title = ggplot2::element_text(size = ggplot2::rel(" + getValue("theme_title_rel") + "))"); }
     if(getValue("theme_legend_rel") != 0.8) { theme_list.push("legend.text = ggplot2::element_text(size = ggplot2::rel(" + getValue("theme_legend_rel") + "))"); }
-
     if(getValue("theme_legend_pos") != "right") { theme_list.push("legend.position = \"" + getValue("theme_legend_pos") + "\""); }
-
     var x_angle = getValue("theme_x_angle");
     var x_hjust = getValue("theme_x_hjust");
     var x_vjust = getValue("theme_x_vjust");
     if(x_angle != 0 || x_hjust != 0.5 || x_vjust != 0.5) {
         theme_list.push("axis.text.x = ggplot2::element_text(angle=" + x_angle + ", hjust=" + x_hjust + ", vjust=" + x_vjust + ")");
     }
-
     if(theme_list.length > 0) {
       echo("p <- p + ggplot2::theme(" + theme_list.join(", ") + ")\n");
     }

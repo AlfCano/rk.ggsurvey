@@ -3,9 +3,9 @@
 >
 <document
 	base_prefix=""
-	namespace="ggGraphs"
-	id="ggGraphs_rkward"
-	po_id="ggGraphs_rkward"
+	namespace="MeansGraph"
+	id="MeansGraph_rkward"
+	po_id="MeansGraph_rkward"
 	priority="medium"
 >
 	<!--
@@ -20,8 +20,8 @@
 		name="rk.ggsurvey"
 		shortinfo="A plugin package to analyze complex survey designs with custom plugins and the 'ggsurvey' package."
 		longinfo="A plugin package to analyze complex survey designs with custom plugins and the 'ggsurvey' package."
-		version="0.1.6"
-		releasedate="2025-12-09"
+		version="0.1.7"
+		releasedate="2025-12-17"
 		url="https://github.com/AlfCano/rk.ggsurvey"
 		license="GPL (&gt;= 3)"
 	>
@@ -40,52 +40,45 @@
 	/>
 	<components>
 		<component
-			id="cmp_ggGraphsLineGraph"
+			id="cmp_MeansGraphLineGraph"
 			label="Line Graph"
 			type="standard"
 			file="plugins/LineGraph.xml"
 		>
 		</component>
 		<component
-			id="cmp_ggGraphsMeansGraph"
-			label="Means Graph"
-			type="standard"
-			file="plugins/MeansGraph.xml"
-		>
-		</component>
-		<component
-			id="cmp_ggGraphsBarDiagram"
+			id="cmp_MeansGraphBarDiagram"
 			label="Bar Diagram"
 			type="standard"
 			file="plugins/BarDiagram.xml"
 		>
 		</component>
 		<component
-			id="cmp_ggGraphsBoxPlot"
+			id="cmp_MeansGraphBoxPlot"
 			label="Box Plot"
 			type="standard"
 			file="plugins/BoxPlot.xml"
 		>
 		</component>
 		<component
-			id="cmp_ggGraphsHexbinPlot"
+			id="cmp_MeansGraphHexbinPlot"
 			label="Hexbin Plot"
 			type="standard"
 			file="plugins/HexbinPlot.xml"
 		>
 		</component>
 		<component
-			id="cmp_ggGraphsHistogram"
+			id="cmp_MeansGraphHistogram"
 			label="Histogram"
 			type="standard"
 			file="plugins/Histogram.xml"
 		>
 		</component>
 		<component
-			id="cmp_ggGraphsggGraphs"
-			label="ggGraphs"
+			id="cmp_MeansGraphMeansGraph"
+			label="Means Graph"
 			type="standard"
-			file="plugins/ggGraphs.xml"
+			file="plugins/MeansGraph.xml"
 		>
 		</component>
 	</components>
@@ -103,7 +96,7 @@
 					label="ggGraphs"
 				>
 					<entry
-						component="cmp_ggGraphsLineGraph"
+						component="cmp_MeansGraphLineGraph"
 					/>
 				</menu>
 			</menu>
@@ -121,7 +114,7 @@
 					label="ggGraphs"
 				>
 					<entry
-						component="cmp_ggGraphsMeansGraph"
+						component="cmp_MeansGraphBarDiagram"
 					/>
 				</menu>
 			</menu>
@@ -139,7 +132,7 @@
 					label="ggGraphs"
 				>
 					<entry
-						component="cmp_ggGraphsBarDiagram"
+						component="cmp_MeansGraphBoxPlot"
 					/>
 				</menu>
 			</menu>
@@ -157,7 +150,7 @@
 					label="ggGraphs"
 				>
 					<entry
-						component="cmp_ggGraphsBoxPlot"
+						component="cmp_MeansGraphHexbinPlot"
 					/>
 				</menu>
 			</menu>
@@ -175,7 +168,7 @@
 					label="ggGraphs"
 				>
 					<entry
-						component="cmp_ggGraphsHexbinPlot"
+						component="cmp_MeansGraphHistogram"
 					/>
 				</menu>
 			</menu>
@@ -193,25 +186,7 @@
 					label="ggGraphs"
 				>
 					<entry
-						component="cmp_ggGraphsHistogram"
-					/>
-				</menu>
-			</menu>
-		</menu>
-		<menu
-			id="men_Survey"
-			label="Survey"
-		>
-			<menu
-				id="men_Graphs"
-				label="Graphs"
-			>
-				<menu
-					id="men_ggGraphs"
-					label="ggGraphs"
-				>
-					<entry
-						component="cmp_ggGraphsggGraphs"
+						component="cmp_MeansGraphMeansGraph"
 					/>
 				</menu>
 			</menu>
