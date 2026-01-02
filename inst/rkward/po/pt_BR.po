@@ -1,0 +1,248 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: rk.ggsurvey 0.1.8\n"
+"Report-Msgid-Bugs-To: https://mail.kde.org/mailman/listinfo/kde-i18n-doc\n"
+"POT-Creation-Date: 2025-01-02 12:00+0000\n"
+"PO-Revision-Date: 2025-01-02 12:00+0000\n"
+"Last-Translator: Your Name <your.email@example.com>\n"
+"Language-Team: Portuguese (Brazil) <kde-i18n-pt_BR@kde.org>\n"
+"Language: pt_BR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Poedit 3.0\n"
+
+msgid "A plugin package to analyze complex survey designs with custom plugins and the 'ggsurvey' package."
+msgstr "Um pacote de plugins para analisar desenhos amostrais complexos com plugins personalizados e o pacote 'ggsurvey'."
+
+msgid "Means Graph"
+msgstr "Gráfico de Médias"
+
+msgid "Survey"
+msgstr "Pesquisa"
+
+msgid "Graphs"
+msgstr "Gráficos"
+
+msgid "ggGraphs"
+msgstr "ggGraphs"
+
+msgid "Plot Title"
+msgstr "Título do Gráfico"
+
+msgid "Plot Subtitle"
+msgstr "Subtítulo do Gráfico"
+
+msgid "X-axis Label (blank for auto)"
+msgstr "Rótulo do eixo X (vazio para auto)"
+
+msgid "Wrap X-axis Label at (chars, 0 to disable)"
+msgstr "Quebrar rótulo do eixo X em (caracteres, 0 para desativar)"
+
+msgid "Y-axis Label"
+msgstr "Rótulo do eixo Y"
+
+msgid "Wrap Y-axis Label at (chars, 0 to disable)"
+msgstr "Quebrar rótulo do eixo Y em (caracteres, 0 para desativar)"
+
+msgid "Legend Title (blank for auto)"
+msgstr "Título da Legenda (vazio para auto)"
+
+msgid "Wrap Legend Title at (chars, 0 to disable)"
+msgstr "Quebrar título da legenda em (caracteres, 0 para desativar)"
+
+msgid "Wrap Legend Labels at (chars, 0 to disable)"
+msgstr "Quebrar rótulos da legenda em (caracteres, 0 para desativar)"
+
+msgid "Plot Caption"
+msgstr "Legenda do gráfico (Caption)"
+
+msgid "Overall text size relative adjustment"
+msgstr "Ajuste relativo do tamanho geral do texto"
+
+msgid "Plot title size relative adjustment"
+msgstr "Ajuste relativo do tamanho do título"
+
+msgid "Legend text size relative adjustment"
+msgstr "Ajuste relativo do tamanho do texto da legenda"
+
+msgid "Legend Position"
+msgstr "Posição da Legenda"
+
+msgid "Right (Default)"
+msgstr "Direita (Padrão)"
+
+msgid "Left"
+msgstr "Esquerda"
+
+msgid "Top"
+msgstr "Topo"
+
+msgid "Bottom"
+msgstr "Base"
+
+msgid "None"
+msgstr "Nenhuma"
+
+msgid "X-Axis Text"
+msgstr "Texto do Eixo X"
+
+msgid "Angle"
+msgstr "Ângulo"
+
+msgid "H-Just"
+msgstr "Justificativa H"
+
+msgid "V-Just"
+msgstr "Justificativa V"
+
+msgid "X-Axis Value Labels"
+msgstr "Rótulos de Valor do Eixo X"
+
+msgid "Wrap at (chars)"
+msgstr "Quebrar em (caracteres)"
+
+msgid "Y-Axis Value Labels"
+msgstr "Rótulos de Valor do Eixo Y"
+
+msgid "Device type"
+msgstr "Tipo de dispositivo"
+
+msgid "JPG Quality (0-100)"
+msgstr "Qualidade JPG (0-100)"
+
+msgid "Width (px)"
+msgstr "Largura (px)"
+
+msgid "Height (px)"
+msgstr "Altura (px)"
+
+msgid "Resolution (ppi)"
+msgstr "Resolução (ppi)"
+
+msgid "Background"
+msgstr "Fundo"
+
+msgid "Transparent"
+msgstr "Transparente"
+
+msgid "White"
+msgstr "Branco"
+
+msgid "Color Palette (ColorBrewer)"
+msgstr "Paleta de Cores (ColorBrewer)"
+
+msgid "Default (Set1)"
+msgstr "Padrão (Set1)"
+
+msgid "X-axis Ordering"
+msgstr "Ordenação do eixo X"
+
+msgid "Order X-axis by estimate value"
+msgstr "Ordenar eixo X por valor estimado"
+
+msgid "Invert final order"
+msgstr "Inverter ordem final"
+
+msgid "svyby objects"
+msgstr "objetos svyby"
+
+msgid "svyby object to plot"
+msgstr "objeto svyby para plotar"
+
+msgid "X-axis variable (e.g., year)"
+msgstr "Variável do eixo X (ex: ano)"
+
+msgid "Faceting variable (optional)"
+msgstr "Variável de faceta (opcional)"
+
+msgid "Estimate columns"
+msgstr "Colunas de estimativa"
+
+msgid "Standard Error columns"
+msgstr "Colunas de Erro Padrão"
+
+msgid "Means Graph from svyby Object"
+msgstr "Gráfico de Médias a partir de Objeto svyby"
+
+msgid "Data"
+msgstr "Dados"
+
+msgid "Options"
+msgstr "Opções"
+
+msgid "Flip coordinates"
+msgstr "Inverter coordenadas"
+
+msgid "Confidence level for error bars (%)"
+msgstr "Nível de confiança para barras de erro (%)"
+
+msgid "Facet Layout"
+msgstr "Layout de Faceta"
+
+msgid "Wrap (default)"
+msgstr "Quebrar (Wrap - padrão)"
+
+msgid "Force to one row"
+msgstr "Forçar em uma linha"
+
+msgid "Force to one column"
+msgstr "Forçar em uma coluna"
+
+msgid "Labels"
+msgstr "Rótulos"
+
+msgid "Theme"
+msgstr "Tema"
+
+msgid "Output Device"
+msgstr "Dispositivo de Saída"
+
+msgid "Line Graph"
+msgstr "Gráfico de Linhas"
+
+msgid "Grouping variable (optional, for multiple lines)"
+msgstr "Variável de agrupamento (opcional, para múltiplas linhas)"
+
+msgid "Map Grouping to:"
+msgstr "Mapear Agrupamento para:"
+
+msgid "Color only"
+msgstr "Apenas Cor"
+
+msgid "Shape only"
+msgstr "Apenas Forma"
+
+msgid "Color & Shape"
+msgstr "Cor & Forma"
+
+msgid "Line Graph from svyby Object"
+msgstr "Gráfico de Linhas a partir de Objeto svyby"
+
+msgid "Bar Diagram"
+msgstr "Diagrama de Barras"
+
+msgid "Survey Design Objects"
+msgstr "Objetos de Desenho Amostral"
+
+msgid "Survey Design Object"
+msgstr "Objeto de Desenho Amostral"
+
+msgid "X Variable"
+msgstr "Variável X"
+
+msgid "Survey Bar Plot"
+msgstr "Gráfico de Barras de Pesquisa"
+
+msgid "Style & Layout"
+msgstr "Estilo & Layout"
+
+msgid "Box Plot"
+msgstr "Box Plot"
+
+msgid "Hexbin Plot"
+msgstr "Gráfico Hexbin"
+
+msgid "Histogram"
+msgstr "Histograma"

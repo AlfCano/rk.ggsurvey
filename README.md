@@ -1,8 +1,23 @@
-![Version](https://img.shields.io/badge/Version-0.1.7-green.svg)
+# rk.ggsurvey: Survey Visualization Tools for RKWard
+
+![Version](https://img.shields.io/badge/Version-0.1.8-blue.svg)
+![License](https://img.shields.io/badge/License-GPL--3-green.svg)
+[![R Linter](https://github.com/AlfCano/rk.ggsurvey/actions/workflows/lintr.yml/badge.svg)](https://github.com/AlfCano/rk.ggsurvey/actions/workflows/lintr.yml)
 
 An RKWard plugin package to create a wide range of publication-quality visualizations from complex survey data, using the powerful `{ggsurvey}` and `{ggplot2}` packages.
 
 This package provides a user-friendly graphical interface for several `ggsurvey` functions, allowing for easy generation of weighted plots from `survey.design` objects and post-stratification tables from `svyby` objects.
+
+## What's New in Version 0.1.8
+
+This version focuses on accessibility and internationalization. The entire plugin suite has been fully localized.
+
+*   **Multilingual Support:** The interface is now available in:
+    *   🇺🇸 English (Default)
+    *   🇪🇸 Spanish (`es`)
+    *   🇫🇷 French (`fr`)
+    *   🇩🇪 German (`de`)
+    *   🇧🇷 Portuguese (Brazil) (`pt_BR`)
 
 ## Features
 
@@ -12,6 +27,7 @@ This package provides six powerful and highly customizable plotting plugins:
     *   Ideal for visualizing trends over time from pre-calculated `svyby` results.
     *   Supports error bars based on user-defined confidence levels.
     *   Allows for faceting by an additional variable.
+    *   **Visual Aesthetics:** Map grouping variables to Color, Shape, or both.
 
 2.  **Means Graph from svyby Object**:
     *   Visualizes point estimates and confidence intervals using a clean dot plot style (point + error bar).
@@ -43,29 +59,29 @@ This package provides six powerful and highly customizable plotting plugins:
 ### Universal Features
 
 All plotting plugins share a consistent, tabbed interface with extensive options for:
--   **Labels**: Full control over title, subtitle, axes, legend, and caption text.
--   **Style & Layout**: Options for color palettes (`ColorBrewer` or `viridis`), faceting layout, and other plot-specific tweaks.
+-   **Labels**: Full control over title, subtitle, axes, legend, and caption text, with text wrapping options.
+-   **Style & Layout**: Options for color palettes (`ColorBrewer` or `viridis`), faceting layout, and themes.
 -   **Output Device**: Fine-grained control over the output graph, including device type (PNG, JPG, SVG), dimensions, resolution, and background color.
 -   **Live Preview**: All plotting dialogs include a preview pane that updates as you change options.
 
 ## Installation
 
-This plugin is not yet on CRAN. To install it, you will need the `{remotes}` package.
+This plugin is not yet on CRAN. To install it, you will need the `{remotes}` or `{devtools}` package.
 
-1.  **Install `{remotes}`**:
-    If you don't have it, open the R console in RKWard and run:
+1.  **Open RKWard**.
+2.  **Run the following command** in the R console:
+
     ```R
-    install.packages("remotes")
+    # If you don't have devtools installed:
+    # install.packages("devtools")
+    
+    local({
+      require(devtools)
+      install_github("AlfCano/rk.ggsurvey", force = TRUE)
+    })
     ```
 
-2.  **Install the Plugin**:
-    Run the following command in the R console:
-    ```R
-    remotes::install_github("AlfCano/rk.ggsurvey")
-    ```
-
-3.  **Activate the Plugin**:
-    Restart RKWard. The new menu items will be available automatically.
+3.  **Restart RKWard**. The new menu items will be available automatically.
 
 ## Usage
 
@@ -94,6 +110,7 @@ This plugin requires the following R packages to be installed:
 -   `forcats`
 -   `stringr`
 -   `RColorBrewer`
+-   `scales`
 
 ## Author
 

@@ -15,7 +15,7 @@ local({
     ),
     about = list(
       desc = "A plugin package to analyze complex survey designs with custom plugins and the 'ggsurvey' package.",
-      version = "0.1.7",
+      version = "0.1.8",
       url = "https://github.com/AlfCano/rk.ggsurvey",
       license = "GPL (>= 3)"
     )
@@ -590,7 +590,7 @@ local({
     show = FALSE
   )
 
-  cat("\nFully optimized plugin package 'rk.ggsurvey' (v0.1.7) generated.\n")
+  cat("\nFully optimized plugin package 'rk.ggsurvey' (v0.1.8) generated.\n")
   cat("  rk.updatePluginMessages(plugin.dir=\"rk.ggsurvey\")\n")
   cat("  devtools::install(\"rk.ggsurvey\")\n")
 })
