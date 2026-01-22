@@ -92,6 +92,13 @@ function calculate(is_preview){
        echo("piv2 <- dplyr::mutate(piv2, respuesta = stringr::str_remove(variable, \"^se\\\\.\"))\n");
     }
     echo("piv3 <- dplyr::left_join(piv1, piv2, by = c(\"rk_internal_id\", \"respuesta\"))\n");
+
+    // NEW: Clean legend prefix
+    var clean_prefix = getValue("clean_legend_prefix");
+    if (clean_prefix) {
+        echo("piv3[[\"respuesta\"]] <- stringr::str_remove(piv3[[\"respuesta\"]], \"" + clean_prefix + "\")\n");
+    }
+
     echo("piv3[[\"respuesta\"]] <- forcats::fct_rev(piv3[[\"respuesta\"]] )\n");
 
     if (getValue("order_x_est") == "1") {

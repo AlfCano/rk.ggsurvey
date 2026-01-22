@@ -1,6 +1,6 @@
 # rk.ggsurvey: Survey Visualization Tools for RKWard
 
-![Version](https://img.shields.io/badge/Version-0.1.8-blue.svg)
+![Version](https://img.shields.io/badge/Version-0.1.9-blue.svg)
 ![License](https://img.shields.io/badge/License-GPL--3-green.svg)
 [![R Linter](https://github.com/AlfCano/rk.ggsurvey/actions/workflows/lintr.yml/badge.svg)](https://github.com/AlfCano/rk.ggsurvey/actions/workflows/lintr.yml)
 
@@ -8,9 +8,13 @@ An RKWard plugin package to create a wide range of publication-quality visualiza
 
 This package provides a user-friendly graphical interface for several `ggsurvey` functions, allowing for easy generation of weighted plots from `survey.design` objects and post-stratification tables from `svyby` objects.
 
+## What's New in Version 0.1.9
+
+*   **Cleaner Legends:** A new option in the **Labels** tab allows you to remove specific text patterns from legend labels in the line graph dialog. This is essential for cleaning up `svyby` output where variable names are often concatenated with factor levels (e.g., converting "VariableNameLevel" to just "Level").
+
 ## What's New in Version 0.1.8
 
-This version focuses on accessibility and internationalization. The entire plugin suite has been fully localized.
+This version focused on accessibility and internationalization. The entire plugin suite has been fully localized.
 
 *   **Multilingual Support:** The interface is now available in:
     *   🇺🇸 English (Default)
@@ -28,6 +32,7 @@ This package provides six powerful and highly customizable plotting plugins:
     *   Supports error bars based on user-defined confidence levels.
     *   Allows for faceting by an additional variable.
     *   **Visual Aesthetics:** Map grouping variables to Color, Shape, or both.
+    *   **Label Cleaning:** built-in option to strip variable name prefixes from the legend.
 
 2.  **Means Graph from svyby Object**:
     *   Visualizes point estimates and confidence intervals using a clean dot plot style (point + error bar).

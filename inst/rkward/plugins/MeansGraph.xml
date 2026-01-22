@@ -77,6 +77,7 @@
 							<input label="Y-axis Label" id="plot_ylab" />
 							<spinbox label="Wrap Y-axis Label at (chars, 0 to disable)" id="plot_ylab_wrap" min="0" max="100" />
 							<input label="Legend Title (blank for auto)" id="plot_legend_title" />
+							<input label="Remove text from Legend Labels (e.g. 'VarName')" id="clean_legend_prefix" />
 							<spinbox label="Wrap Legend Title at (chars, 0 to disable)" id="legend_title_wrap_width" initial="20" min="0" max="100" />
 							<spinbox label="Wrap Legend Labels at (chars, 0 to disable)" id="legend_wrap_width" initial="20" min="0" max="100" />
 							<input label="Plot Caption" id="plot_caption" />

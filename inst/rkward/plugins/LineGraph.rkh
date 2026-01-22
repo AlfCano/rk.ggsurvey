@@ -56,6 +56,8 @@
 		</setting>
 		<setting id="plot_legend_title">
 		</setting>
+		<setting id="clean_legend_prefix">
+		</setting>
 		<setting id="legend_title_wrap_width">
 		</setting>
 		<setting id="legend_wrap_width">

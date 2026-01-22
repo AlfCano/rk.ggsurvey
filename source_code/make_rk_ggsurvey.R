@@ -15,7 +15,7 @@ local({
     ),
     about = list(
       desc = "A plugin package to analyze complex survey designs with custom plugins and the 'ggsurvey' package.",
-      version = "0.1.8",
+      version = "0.1.9",
       url = "https://github.com/AlfCano/rk.ggsurvey",
       license = "GPL (>= 3)"
     )
@@ -44,18 +44,43 @@ local({
     }
   '
 
-  # --- Labels Tab ---
-  labels_tab <- rk.XML.col(
-    rk.XML.input(label = "Plot Title", id.name = "plot_title"),
-    rk.XML.input(label = "Plot Subtitle", id.name = "plot_subtitle"),
-    rk.XML.input(label = "X-axis Label (blank for auto)", id.name = "plot_xlab"),
-    rk.XML.spinbox(label = "Wrap X-axis Label at (chars, 0 to disable)", id.name = "plot_xlab_wrap", min = 0, max = 100, initial = 0),
-    rk.XML.input(label = "Y-axis Label", id.name = "plot_ylab"),
-    rk.XML.spinbox(label = "Wrap Y-axis Label at (chars, 0 to disable)", id.name = "plot_ylab_wrap", min = 0, max = 100, initial = 0),
-    rk.XML.input(label = "Legend Title (blank for auto)", id.name = "plot_legend_title"),
-    rk.XML.spinbox(label = "Wrap Legend Title at (chars, 0 to disable)", id.name = "legend_title_wrap_width", min = 0, max = 100, initial = 20),
-    rk.XML.spinbox(label = "Wrap Legend Labels at (chars, 0 to disable)", id.name = "legend_wrap_width", min = 0, max = 100, initial = 20),
-    rk.XML.input(label = "Plot Caption", id.name = "plot_caption")
+  # --- Individual Label Inputs ---
+  # Defined individually so we can mix-and-match for different plugins
+  inp_title <- rk.XML.input(label = "Plot Title", id.name = "plot_title")
+  inp_subtitle <- rk.XML.input(label = "Plot Subtitle", id.name = "plot_subtitle")
+  inp_xlab <- rk.XML.input(label = "X-axis Label (blank for auto)", id.name = "plot_xlab")
+  spin_xlab_wrap <- rk.XML.spinbox(label = "Wrap X-axis Label at (chars, 0 to disable)", id.name = "plot_xlab_wrap", min = 0, max = 100, initial = 0)
+  inp_ylab <- rk.XML.input(label = "Y-axis Label", id.name = "plot_ylab")
+  spin_ylab_wrap <- rk.XML.spinbox(label = "Wrap Y-axis Label at (chars, 0 to disable)", id.name = "plot_ylab_wrap", min = 0, max = 100, initial = 0)
+  inp_leg_title <- rk.XML.input(label = "Legend Title (blank for auto)", id.name = "plot_legend_title")
+
+  # The specific input for cleaning (Only for svyby plots)
+  inp_clean_leg <- rk.XML.input(label = "Remove text from Legend Labels (e.g. 'VarName')", id.name = "clean_legend_prefix")
+
+  spin_leg_title_wrap <- rk.XML.spinbox(label = "Wrap Legend Title at (chars, 0 to disable)", id.name = "legend_title_wrap_width", min = 0, max = 100, initial = 20)
+  spin_leg_wrap <- rk.XML.spinbox(label = "Wrap Legend Labels at (chars, 0 to disable)", id.name = "legend_wrap_width", min = 0, max = 100, initial = 20)
+  inp_caption <- rk.XML.input(label = "Plot Caption", id.name = "plot_caption")
+
+  # --- Label Tabs Definitions ---
+
+  # 1. Extended Tab (For Line/Means - Includes Cleaning)
+  labels_tab_extended <- rk.XML.col(
+    inp_title, inp_subtitle,
+    inp_xlab, spin_xlab_wrap,
+    inp_ylab, spin_ylab_wrap,
+    inp_leg_title, inp_clean_leg, # <--- Included here
+    spin_leg_title_wrap, spin_leg_wrap,
+    inp_caption
+  )
+
+  # 2. Simple Tab (For Bar/Box/Hist - No Cleaning)
+  labels_tab_simple <- rk.XML.col(
+    inp_title, inp_subtitle,
+    inp_xlab, spin_xlab_wrap,
+    inp_ylab, spin_ylab_wrap,
+    inp_leg_title, # <--- No cleaning input
+    spin_leg_title_wrap, spin_leg_wrap,
+    inp_caption
   )
 
   # --- Theme Tab ---
@@ -150,7 +175,7 @@ local({
               "Wrap (default)"=list(val="wrap",chk=TRUE), "Force to one row"=list(val="row"), "Force to one column"=list(val="col")
             ))
           ),
-          "Labels" = labels_tab,
+          "Labels" = labels_tab_extended, # USES EXTENDED TAB
           "Theme" = theme_tab,
           "Output Device" = device_tab
         )),
@@ -194,6 +219,13 @@ local({
     }
 
     echo("piv3 <- dplyr::left_join(piv1, piv2, by = c(\\"rk_internal_id\\", \\"respuesta\\"))\\n");
+
+    // NEW: Clean legend prefix
+    var clean_prefix = getValue("clean_legend_prefix");
+    if (clean_prefix) {
+        echo("piv3[[\\"respuesta\\"]] <- stringr::str_remove(piv3[[\\"respuesta\\"]], \\"" + clean_prefix + "\\")\\n");
+    }
+
     echo("piv3[[\\"respuesta\\"]] <- forcats::fct_rev(piv3[[\\"respuesta\\"]] )\\n");
 
     if (getValue("order_x_est") == "1") {
@@ -340,7 +372,7 @@ local({
               "Wrap (default)"=list(val="wrap",chk=TRUE), "Force to one row"=list(val="row"), "Force to one column"=list(val="col")
             ))
           ),
-          "Labels" = labels_tab,
+          "Labels" = labels_tab_extended, # USES EXTENDED TAB
           "Theme" = theme_tab,
           "Output Device" = device_tab
         )),
@@ -383,6 +415,13 @@ local({
        echo("piv2 <- dplyr::mutate(piv2, respuesta = stringr::str_remove(variable, \\"^se\\\\\\\\.\\"))\\n");
     }
     echo("piv3 <- dplyr::left_join(piv1, piv2, by = c(\\"rk_internal_id\\", \\"respuesta\\"))\\n");
+
+    // NEW: Clean legend prefix
+    var clean_prefix = getValue("clean_legend_prefix");
+    if (clean_prefix) {
+        echo("piv3[[\\"respuesta\\"]] <- stringr::str_remove(piv3[[\\"respuesta\\"]], \\"" + clean_prefix + "\\")\\n");
+    }
+
     echo("piv3[[\\"respuesta\\"]] <- forcats::fct_rev(piv3[[\\"respuesta\\"]] )\\n");
 
     if (getValue("order_x_est") == "1") {
@@ -543,7 +582,7 @@ local({
   bar_dialog <- rk.XML.dialog(label = "Survey Bar Plot", child = rk.XML.row(bar_svy_selector, rk.XML.col(
     rk.XML.tabbook(tabs=list(
       "Data" = rk.XML.col(bar_svy_slot, bar_x_slot),
-      "Labels" = labels_tab,
+      "Labels" = labels_tab_simple, # USES SIMPLE TAB
       "Style & Layout" = rk.XML.col(color_palette_dropdown),
       "Output Device" = device_tab
     )),
@@ -590,7 +629,7 @@ local({
     show = FALSE
   )
 
-  cat("\nFully optimized plugin package 'rk.ggsurvey' (v0.1.8) generated.\n")
+  cat("\nFully optimized plugin package 'rk.ggsurvey' (v0.1.9) generated.\n")
   cat("  rk.updatePluginMessages(plugin.dir=\"rk.ggsurvey\")\n")
   cat("  devtools::install(\"rk.ggsurvey\")\n")
 })
