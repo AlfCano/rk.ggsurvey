@@ -45,7 +45,7 @@ function calculate(is_preview){
    
     var svy_obj = getValue("svy_object"); var x_var = getColumnName(getValue("x_var")); var y_var = getColumnName(getValue("y_var"));
     if(!svy_obj) return;
-    echo("p <- ggsurvey::ggboxweight_svy(" + svy_obj + ", " + x_var + ", " + y_var + ")\n");
+    echo("p <- ggsurvey::ggboxweight2d_svy(" + svy_obj + ", " + x_var + ", " + y_var + ")\n");
   
 }
 

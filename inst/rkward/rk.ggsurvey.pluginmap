@@ -20,7 +20,7 @@
 		name="rk.ggsurvey"
 		shortinfo="A plugin package to analyze complex survey designs with custom plugins and the 'ggsurvey' package."
 		longinfo="A plugin package to analyze complex survey designs with custom plugins and the 'ggsurvey' package."
-		version="0.1.10"
+		version="0.1.11"
 		releasedate="2026-05-29"
 		url="https://github.com/AlfCano/rk.ggsurvey"
 		license="GPL (&gt;= 3)"

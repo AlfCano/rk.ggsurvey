@@ -1,6 +1,6 @@
 # rk.ggsurvey: Survey Visualization Tools for RKWard
 
-![Version](https://img.shields.io/badge/Version-0.1.10-blue.svg)
+![Version](https://img.shields.io/badge/Version-0.1.11-blue.svg)
 ![License](https://img.shields.io/badge/License-GPL--3-green.svg)
 [![R Linter](https://github.com/AlfCano/rk.ggsurvey/actions/workflows/lintr.yml/badge.svg)](https://github.com/AlfCano/rk.ggsurvey/actions/workflows/lintr.yml)
 
@@ -8,7 +8,16 @@ An RKWard plugin package to create a wide range of publication-quality visualiza
 
 This package provides a user-friendly graphical interface for several `ggsurvey` functions, allowing for easy generation of weighted plots from `survey.design` objects and post-stratification tables from `svyby` objects.
 
-## What's New in Version 0.1.10?
+## What's New in Version 0.1.11?
+
+### 🐛 Bug Fixes
+* **Corrected Box Plot Function Call:** Addressed an issue where the Survey Box Plot component was incorrectly sending two variables (X and Y) to the 1-dimensional function `ggboxweight_svy()`, causing an `"argument unused"` error.
+* **Bivariate Integration:** The JavaScript code generation for the Box Plot has been successfully patched to invoke the specialized 2-dimensional function **`ggboxweight2d_svy(design, x, y)`**. Users can now properly cross categorical grouping variables (X) against continuous variables (Y) without execution failures.
+
+### 💡 User Notes
+* *Reminder:* When plotting bivariate boxplots, ensure that your X variable is explicitly cast as a factor (categorical) and your Y variable is numeric. Heavily skewed data with zero-variance quantiles (e.g., massive amounts of $0 income) may still cause native `quantreg` "Singular design matrix" errors, which should be handled via standard data cleaning (e.g., `subset(design, Y > 0)`) prior to plotting.
+
+## What's New in Version 0.1.10
 
 ### 🐛 Bug Fixes
 * **Critical UI Fix for Bivariate Plots:** Resolved a copy-paste bug where the **Box Plot**, **Hexbin Plot**, and **Histogram** components were incorrectly inheriting the Bar Diagram's UI and JavaScript logic. 

@@ -15,7 +15,7 @@ local({
     ),
     about = list(
       desc = "A plugin package to analyze complex survey designs with custom plugins and the 'ggsurvey' package.",
-      version = "0.1.10",
+      version = "0.1.11",
       url = "https://github.com/AlfCano/rk.ggsurvey",
       license = "GPL (>= 3)"
     )
@@ -612,12 +612,12 @@ local({
   y_slot_2v <- rk.XML.varslot(label="Y Variable", source="svy_sel_2v", required=TRUE, id.name="y_var")
   tab_data_2v <- rk.XML.col(svy_slot_2v, x_slot_2v, y_slot_2v)
 
-  # Diálogo e JS para Boxplot
+# Diálogo e JS para Boxplot
   dialog_box <- rk.XML.dialog(label="Survey Box Plot", child=rk.XML.row(svy_sel_2v, rk.XML.col(rk.XML.tabbook(tabs=list("Data"=tab_data_2v, "Labels"=labels_tab_simple, "Style & Layout"=rk.XML.col(color_palette_dropdown), "Output Device"=device_tab)), rk.XML.preview(id.name="plot_preview_box"))))
   js_calc_box <- paste(js_helpers, '
     var svy_obj = getValue("svy_object"); var x_var = getColumnName(getValue("x_var")); var y_var = getColumnName(getValue("y_var"));
     if(!svy_obj) return;
-    echo("p <- ggsurvey::ggboxweight_svy(" + svy_obj + ", " + x_var + ", " + y_var + ")\\n");
+    echo("p <- ggsurvey::ggboxweight2d_svy(" + svy_obj + ", " + x_var + ", " + y_var + ")\\n");
   ')
 
   # Diálogo e JS para Hexbin
@@ -666,7 +666,7 @@ local({
     show = FALSE
   )
 
-  cat("\nFully optimized plugin package 'rk.ggsurvey' (v0.1.10) generated.\n")
+  cat("\nFully optimized plugin package 'rk.ggsurvey' (v0.1.11) generated.\n")
   cat("  rk.updatePluginMessages(plugin.dir=\"rk.ggsurvey\")\n")
   cat("  devtools::install(\"rk.ggsurvey\")\n")
 })
