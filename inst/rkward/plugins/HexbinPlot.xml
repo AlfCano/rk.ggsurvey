@@ -18,15 +18,16 @@
 			<connect governor="!edit!.state" client="!edit!.enabled" />
 		-->
 	</logic>
-	<dialog label="Survey Bar Plot">
-		<row id="row_vSDODDSDOX">
-			<varselector id="bar_svy_selector" label="Survey Design Objects" />
-			<column id="clm_tDDSDOXVSD">
+	<dialog label="Survey Hexbin Plot">
+		<row id="row_v2SDODDSDO">
+			<varselector id="svy_sel_2v" label="Survey Design Objects" />
+			<column id="clm_tDDSDO2XV2">
 				<tabbook>
 					<tab label="Data" id="tab_Data">
-						<column id="clm_vrsltSDOXV">
-							<varslot id="svy_object" label="Survey Design Object" source="bar_svy_selector" required="true" />
-							<varslot id="x_var" label="X Variable" source="bar_svy_selector" required="true" />
+						<column id="clm_vSDO2XV2YV">
+							<varslot id="svy_object" label="Survey Design Object" source="svy_sel_2v" required="true" />
+							<varslot id="x_var" label="X Variable" source="svy_sel_2v" required="true" />
+							<varslot id="y_var" label="Y Variable" source="svy_sel_2v" required="true" />
 						</column>
 					</tab>
 					<tab label="Labels" id="tab_Labels">
@@ -82,7 +83,7 @@
 						</column>
 					</tab>
 				</tabbook>
-				<preview label="Preview" id="plot_preview" />
+				<preview label="Preview" id="plot_preview_hex" />
 			</column>
 		</row>
 	</dialog>

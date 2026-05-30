@@ -19,6 +19,8 @@
 		</setting>
 		<setting id="x_var">
 		</setting>
+		<setting id="y_var">
+		</setting>
 		<caption id="tab_Labels" />
 		<setting id="plot_title">
 		</setting>

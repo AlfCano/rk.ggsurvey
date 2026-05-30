@@ -15,7 +15,7 @@ local({
     ),
     about = list(
       desc = "A plugin package to analyze complex survey designs with custom plugins and the 'ggsurvey' package.",
-      version = "0.1.9",
+      version = "0.1.10",
       url = "https://github.com/AlfCano/rk.ggsurvey",
       license = "GPL (>= 3)"
     )
@@ -574,31 +574,68 @@ local({
   ')
   line_component <- rk.plugin.component("Line Graph", xml=list(dialog=line_graph_dialog), js=list(require=c("ggplot2","dplyr","tidyr","RColorBrewer","scales","stringr"), calculate=js_calc_line, printout=js_print_graph), hierarchy = list("Survey","Graphs","ggGraphs"))
 
-  # --- C. OTHER GRAPHS ---
-  bar_svy_selector <- rk.XML.varselector(id.name="bar_svy_selector", label="Survey Design Objects"); attr(bar_svy_selector, "classes") <- "svydesign"
-  bar_svy_slot <- rk.XML.varslot(label="Survey Design Object", source="bar_svy_selector", required=TRUE, id.name="svy_object")
-  bar_x_slot <- rk.XML.varslot(label="X Variable", source="bar_svy_selector", required=TRUE, id.name="x_var"); attr(bar_x_slot, "source_property") <- "variables"
+# --- C. OTHER GRAPHS ---
 
-  bar_dialog <- rk.XML.dialog(label = "Survey Bar Plot", child = rk.XML.row(bar_svy_selector, rk.XML.col(
-    rk.XML.tabbook(tabs=list(
-      "Data" = rk.XML.col(bar_svy_slot, bar_x_slot),
-      "Labels" = labels_tab_simple, # USES SIMPLE TAB
-      "Style & Layout" = rk.XML.col(color_palette_dropdown),
-      "Output Device" = device_tab
-    )),
-    rk.XML.preview(id.name="plot_preview")
-  )))
+  # ==========================================
+  # FAMILIA 1: GRÁFICOS DE 1 VARIABLE (X)
+  # ==========================================
+  svy_sel_1v <- rk.XML.varselector(id.name="svy_sel_1v", label="Survey Design Objects")
+  attr(svy_sel_1v, "classes") <- "svydesign"
+  svy_slot_1v <- rk.XML.varslot(label="Survey Design Object", source="svy_sel_1v", required=TRUE, id.name="svy_object")
+  x_slot_1v <- rk.XML.varslot(label="X Variable", source="svy_sel_1v", required=TRUE, id.name="x_var")
+  tab_data_1v <- rk.XML.col(svy_slot_1v, x_slot_1v)
+
+  # Diálogo e JS para Bar
+  dialog_bar <- rk.XML.dialog(label="Survey Bar Plot", child=rk.XML.row(svy_sel_1v, rk.XML.col(rk.XML.tabbook(tabs=list("Data"=tab_data_1v, "Labels"=labels_tab_simple, "Style & Layout"=rk.XML.col(color_palette_dropdown), "Output Device"=device_tab)), rk.XML.preview(id.name="plot_preview_bar"))))
   js_calc_bar <- paste(js_helpers, '
-    var svy_obj = getValue("svy_object");
-    var x_var = getColumnName(getValue("x_var"));
+    var svy_obj = getValue("svy_object"); var x_var = getColumnName(getValue("x_var"));
     if(!svy_obj) return;
     echo("p <- ggsurvey::ggbarweight_svy(" + svy_obj + ", " + x_var + ")\\n");
   ')
 
-  bar_component <- rk.plugin.component("Bar Diagram", xml=list(dialog=bar_dialog), js=list(require=c("ggsurvey","ggplot2"), calculate=js_calc_bar, printout=js_print_graph), hierarchy = list("Survey","Graphs","ggGraphs"))
-  box_component <- rk.plugin.component("Box Plot", xml=list(dialog=bar_dialog), js=list(require=c("ggsurvey","ggplot2"), calculate=js_calc_bar, printout=js_print_graph), hierarchy = list("Survey","Graphs","ggGraphs"))
-  hex_component <- rk.plugin.component("Hexbin Plot", xml=list(dialog=bar_dialog), js=list(require=c("ggsurvey","ggplot2"), calculate=js_calc_bar, printout=js_print_graph), hierarchy = list("Survey","Graphs","ggGraphs"))
-  hist_component <- rk.plugin.component("Histogram", xml=list(dialog=bar_dialog), js=list(require=c("ggsurvey","ggplot2"), calculate=js_calc_bar, printout=js_print_graph), hierarchy = list("Survey","Graphs","ggGraphs"))
+  # Diálogo e JS para Histograma
+  dialog_hist <- rk.XML.dialog(label="Survey Histogram", child=rk.XML.row(svy_sel_1v, rk.XML.col(rk.XML.tabbook(tabs=list("Data"=tab_data_1v, "Labels"=labels_tab_simple, "Style & Layout"=rk.XML.col(color_palette_dropdown), "Output Device"=device_tab)), rk.XML.preview(id.name="plot_preview_hist"))))
+  js_calc_hist <- paste(js_helpers, '
+    var svy_obj = getValue("svy_object"); var x_var = getColumnName(getValue("x_var"));
+    if(!svy_obj) return;
+    echo("p <- ggsurvey::gghistweight_svy(" + svy_obj + ", " + x_var + ")\\n");
+  ')
+
+
+  # ==========================================
+  # FAMILIA 2: GRÁFICOS DE 2 VARIABLES (X, Y)
+  # ==========================================
+  svy_sel_2v <- rk.XML.varselector(id.name="svy_sel_2v", label="Survey Design Objects")
+  attr(svy_sel_2v, "classes") <- "svydesign"
+  svy_slot_2v <- rk.XML.varslot(label="Survey Design Object", source="svy_sel_2v", required=TRUE, id.name="svy_object")
+  x_slot_2v <- rk.XML.varslot(label="X Variable", source="svy_sel_2v", required=TRUE, id.name="x_var")
+  y_slot_2v <- rk.XML.varslot(label="Y Variable", source="svy_sel_2v", required=TRUE, id.name="y_var")
+  tab_data_2v <- rk.XML.col(svy_slot_2v, x_slot_2v, y_slot_2v)
+
+  # Diálogo e JS para Boxplot
+  dialog_box <- rk.XML.dialog(label="Survey Box Plot", child=rk.XML.row(svy_sel_2v, rk.XML.col(rk.XML.tabbook(tabs=list("Data"=tab_data_2v, "Labels"=labels_tab_simple, "Style & Layout"=rk.XML.col(color_palette_dropdown), "Output Device"=device_tab)), rk.XML.preview(id.name="plot_preview_box"))))
+  js_calc_box <- paste(js_helpers, '
+    var svy_obj = getValue("svy_object"); var x_var = getColumnName(getValue("x_var")); var y_var = getColumnName(getValue("y_var"));
+    if(!svy_obj) return;
+    echo("p <- ggsurvey::ggboxweight_svy(" + svy_obj + ", " + x_var + ", " + y_var + ")\\n");
+  ')
+
+  # Diálogo e JS para Hexbin
+  dialog_hex <- rk.XML.dialog(label="Survey Hexbin Plot", child=rk.XML.row(svy_sel_2v, rk.XML.col(rk.XML.tabbook(tabs=list("Data"=tab_data_2v, "Labels"=labels_tab_simple, "Style & Layout"=rk.XML.col(color_palette_dropdown), "Output Device"=device_tab)), rk.XML.preview(id.name="plot_preview_hex"))))
+  js_calc_hex <- paste(js_helpers, '
+    var svy_obj = getValue("svy_object"); var x_var = getColumnName(getValue("x_var")); var y_var = getColumnName(getValue("y_var"));
+    if(!svy_obj) return;
+    echo("p <- ggsurvey::gghexweight_svy(" + svy_obj + ", " + x_var + ", " + y_var + ")\\n");
+  ')
+
+
+  # ==========================================
+  # DEFINICIÓN DE COMPONENTES CORRECTA
+  # ==========================================
+  bar_component <- rk.plugin.component("Bar Diagram", xml=list(dialog=dialog_bar), js=list(require=c("ggsurvey","ggplot2"), calculate=js_calc_bar, printout=js_print_graph), hierarchy = list("Survey","Graphs","ggGraphs"))
+  hist_component <- rk.plugin.component("Histogram", xml=list(dialog=dialog_hist), js=list(require=c("ggsurvey","ggplot2"), calculate=js_calc_hist, printout=js_print_graph), hierarchy = list("Survey","Graphs","ggGraphs"))
+  box_component <- rk.plugin.component("Box Plot", xml=list(dialog=dialog_box), js=list(require=c("ggsurvey","ggplot2"), calculate=js_calc_box, printout=js_print_graph), hierarchy = list("Survey","Graphs","ggGraphs"))
+  hex_component <- rk.plugin.component("Hexbin Plot", xml=list(dialog=dialog_hex), js=list(require=c("ggsurvey","ggplot2"), calculate=js_calc_hex, printout=js_print_graph), hierarchy = list("Survey","Graphs","ggGraphs"))
 
   # =========================================================================================
   # 5. Final Skeleton Generation
@@ -629,7 +666,7 @@ local({
     show = FALSE
   )
 
-  cat("\nFully optimized plugin package 'rk.ggsurvey' (v0.1.9) generated.\n")
+  cat("\nFully optimized plugin package 'rk.ggsurvey' (v0.1.10) generated.\n")
   cat("  rk.updatePluginMessages(plugin.dir=\"rk.ggsurvey\")\n")
   cat("  devtools::install(\"rk.ggsurvey\")\n")
 })

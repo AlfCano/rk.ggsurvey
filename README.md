@@ -1,12 +1,27 @@
 # rk.ggsurvey: Survey Visualization Tools for RKWard
 
-![Version](https://img.shields.io/badge/Version-0.1.9-blue.svg)
+![Version](https://img.shields.io/badge/Version-0.1.10-blue.svg)
 ![License](https://img.shields.io/badge/License-GPL--3-green.svg)
 [![R Linter](https://github.com/AlfCano/rk.ggsurvey/actions/workflows/lintr.yml/badge.svg)](https://github.com/AlfCano/rk.ggsurvey/actions/workflows/lintr.yml)
 
 An RKWard plugin package to create a wide range of publication-quality visualizations from complex survey data, using the powerful `{ggsurvey}` and `{ggplot2}` packages.
 
 This package provides a user-friendly graphical interface for several `ggsurvey` functions, allowing for easy generation of weighted plots from `survey.design` objects and post-stratification tables from `svyby` objects.
+
+## What's New in Version 0.1.10?
+
+### 🐛 Bug Fixes
+* **Critical UI Fix for Bivariate Plots:** Resolved a copy-paste bug where the **Box Plot**, **Hexbin Plot**, and **Histogram** components were incorrectly inheriting the Bar Diagram's UI and JavaScript logic. 
+* **Missing Y-Variable Slots Added:** Box Plots and Hexbin Plots now correctly display input slots for both **X and Y variables** (previously, they only allowed an X variable).
+* **Correct `ggsurvey` Function Calls:** The JavaScript generator was updated to call the appropriate underlying functions for each plot type instead of reusing `ggbarweight_svy()`:
+  * Box Plot now calls `ggboxweight_svy(design, x, y)`
+  * Hexbin Plot now calls `gghexweight_svy(design, x, y)`
+  * Histogram now calls `gghistweight_svy(design, x)`
+
+### ✨ Enhancements
+* **Independent Previews:** Each plot component now has a unique RKWard preview ID (`plot_preview_bar`, `plot_preview_hex`, etc.). This prevents the internal RKWard HTML engine from crashing or freezing when switching between different types of graphs in the same session.
+* **Component Restructuring:** The source code was refactored to separate "1-Variable Graphs" (Bar, Histogram) from "2-Variable Graphs" (Box, Hexbin), making future maintenance and scaling much easier.
+
 
 ## What's New in Version 0.1.9
 

@@ -43,10 +43,9 @@ function calculate(is_preview){
         }
     }
    
-    var svy_obj = getValue("svy_object");
-    var x_var = getColumnName(getValue("x_var"));
+    var svy_obj = getValue("svy_object"); var x_var = getColumnName(getValue("x_var"));
     if(!svy_obj) return;
-    echo("p <- ggsurvey::ggbarweight_svy(" + svy_obj + ", " + x_var + ")\n");
+    echo("p <- ggsurvey::gghistweight_svy(" + svy_obj + ", " + x_var + ")\n");
   
 }
 
