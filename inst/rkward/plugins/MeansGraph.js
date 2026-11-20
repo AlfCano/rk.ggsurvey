@@ -111,9 +111,9 @@ function calculate(is_preview){
     echo("piv3[[\"respuesta\"]] <- forcats::fct_rev(piv3[[\"respuesta\"]] )\n");
 
     if (getValue("order_x_est") == "1") {
-       echo("piv3[[\"" + xaxis_clean + "\"]] <- forcats::fct_reorder(as.factor(piv3[[\"" + xaxis_clean + "\"]]), piv3$recuento)\n");
+       echo("piv3[[\"" + xaxis_clean + "\"]] <- suppressWarnings(forcats::fct_reorder(factor(as.character(piv3[[\"" + xaxis_clean + "\"]]), ordered = FALSE), as.numeric(piv3$recuento), .fun = function(x) mean(x, na.rm = TRUE)))\n");
     } else {
-       echo("piv3[[\"" + xaxis_clean + "\"]] <- as.factor(piv3[[\"" + xaxis_clean + "\"]])\n");
+       echo("piv3[[\"" + xaxis_clean + "\"]] <- factor(as.character(piv3[[\"" + xaxis_clean + "\"]]), ordered = FALSE)\n");
     }
 
     if (getValue("invert_order") == "1") {

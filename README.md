@@ -1,6 +1,6 @@
 # rk.ggsurvey: Survey Visualization Tools for RKWard
 
-![Version](https://img.shields.io/badge/Version-0.1.11-blue.svg)
+![Version](https://img.shields.io/badge/Version-0.1.12-blue.svg)
 ![License](https://img.shields.io/badge/License-GPL--3-green.svg)
 [![R Linter](https://github.com/AlfCano/rk.ggsurvey/actions/workflows/lintr.yml/badge.svg)](https://github.com/AlfCano/rk.ggsurvey/actions/workflows/lintr.yml)
 
@@ -8,7 +8,13 @@ An RKWard plugin package to create a wide range of publication-quality visualiza
 
 This package provides a user-friendly graphical interface for several `ggsurvey` functions, allowing for easy generation of weighted plots from `survey.design` objects and post-stratification tables from `svyby` objects.
 
-## What's New in Version 0.1.11?
+
+## What's New in Version 0.1.12
+
+*   **Fixed X-Axis Estimate Ordering:** Fixed sorting in **Means Graph** (and **Line Graph**) so `Order X-axis by estimate value` explicitly sorts by the **mean** while safely ignoring missing values (`na.rm = TRUE`), instead of `forcats::fct_reorder()`'s default `median`.
+*   **Factor & Label Safety:** Strips `ordered` factor locks and `haven`-style attributes prior to reordering, preventing sorting failures on survey and SPSS-imported datasets.
+
+## What's New in Version 0.1.11
 
 ### 🐛 Bug Fixes
 * **Corrected Box Plot Function Call:** Addressed an issue where the Survey Box Plot component was incorrectly sending two variables (X and Y) to the 1-dimensional function `ggboxweight_svy()`, causing an `"argument unused"` error.
